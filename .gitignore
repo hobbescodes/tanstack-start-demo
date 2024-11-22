@@ -16,3 +16,6 @@ node_modules/
 
 # Finder (MacOS) folder config
 .DS_Store
+
+# Temp files
+count.txt
