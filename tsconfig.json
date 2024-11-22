@@ -18,5 +18,11 @@
     "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,
     "strictNullChecks": true,
+
+    // Setup
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["app/*"]
+    }
   }
 }

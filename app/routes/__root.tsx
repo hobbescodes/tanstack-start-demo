@@ -7,6 +7,29 @@ import { Meta, Scripts } from "@tanstack/start";
 
 import type { ReactNode } from "react";
 
+const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
+  return (
+    <html lang="en">
+      <head>
+        <Meta />
+      </head>
+      <body>
+        {children}
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+const RootComponent = () => {
+  return (
+    <RootDocument>
+      <Outlet />
+    </RootDocument>
+  );
+}
+
 export const Route = createRootRoute({
   head: () => ({
     meta: [
@@ -24,26 +47,3 @@ export const Route = createRootRoute({
   }),
   component: RootComponent,
 });
-
-function RootComponent() {
-  return (
-    <RootDocument>
-      <Outlet />
-    </RootDocument>
-  );
-}
-
-function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
-  return (
-    <html lang="en">
-      <head>
-        <Meta />
-      </head>
-      <body>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
-      </body>
-    </html>
-  );
-}
