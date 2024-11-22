@@ -5,6 +5,8 @@ import {
 } from "@tanstack/react-router";
 import { Meta, Scripts } from "@tanstack/start";
 
+import { RouterDevTools } from "components/dev";
+
 import type { ReactNode } from "react";
 
 const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
@@ -20,15 +22,16 @@ const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
       </body>
     </html>
   );
-}
+};
 
 const RootComponent = () => {
   return (
     <RootDocument>
       <Outlet />
+      <RouterDevTools />
     </RootDocument>
   );
-}
+};
 
 export const Route = createRootRoute({
   head: () => ({
