@@ -20,6 +20,6 @@
     "strictNullChecks": true,
 
     // Setup
-    "baseUrl": "src"
+    "baseUrl": "app"
   }
 }

@@ -5,7 +5,4 @@ export default defineConfig({
   vite: {
     plugins: [tsconfigPaths()],
   },
-  tsr: {
-    appDirectory: "src/app",
-  },
 });
