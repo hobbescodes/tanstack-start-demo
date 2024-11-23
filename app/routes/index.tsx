@@ -2,7 +2,14 @@ import * as fs from "node:fs";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/start";
 
-import { Button } from "components/core";
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "components/core";
 
 const filePath = "count.txt";
 
@@ -30,15 +37,25 @@ const Home = () => {
   const state = Route.useLoaderData();
 
   return (
-    <Button
-      onClick={() => {
-        updateCount({ data: 1 }).then(() => {
-          router.invalidate();
-        });
-      }}
-    >
-      Add 1 to {state as unknown as number}?
-    </Button>
+    <div className="flex flex-col max-w-4xl mx-auto p-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Total Expenses</CardTitle>
+          <CardDescription>The total amount of expenses.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button
+            onClick={() => {
+              updateCount({ data: 1 }).then(() => {
+                router.invalidate();
+              });
+            }}
+          >
+            Add 1 to {state as unknown as number}?
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
