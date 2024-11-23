@@ -1,9 +1,8 @@
-import * as fs from "node:fs";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/start";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { serverOnly } from "@tanstack/start";
 
 import {
-  Button,
   Card,
   CardHeader,
   CardTitle,
@@ -11,55 +10,35 @@ import {
   CardContent,
 } from "components/core";
 
-const filePath = "count.txt";
+// TODO: figure out appropriate use of serverOnly vs createServerFn (createServerFn always returns a ReadableStream? How to type that appropriately?)
+const getTotalExpenses = serverOnly<Promise<{ total: number }>>(async () => {
+  // TODO: set up fetch for production
+  const response = await fetch("http://localhost:3000/api/expenses/total");
 
-const readCount = async () => {
-  return Number.parseInt(
-    await fs.promises.readFile(filePath, "utf-8").catch(() => "0")
-  );
-};
-
-const getCount = createServerFn({
-  method: "GET",
-}).handler(() => {
-  return readCount();
+  return response.json();
 });
 
-const updateCount = createServerFn({ method: "POST" })
-  .validator((d: number) => d)
-  .handler(async ({ data }) => {
-    const count = await readCount();
-    await fs.promises.writeFile(filePath, `${count + data}`);
-  });
+const totalExpensesQueryOptions = queryOptions({
+  queryKey: ["total-expenses"],
+  queryFn: getTotalExpenses,
+});
 
 const Home = () => {
-  const router = useRouter();
-  const state = Route.useLoaderData();
+  const { data } = useSuspenseQuery(totalExpensesQueryOptions);
 
   return (
-    <div className="flex flex-col max-w-4xl mx-auto p-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>Total Expenses</CardTitle>
-          <CardDescription>The total amount of expenses.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button
-            onClick={() => {
-              updateCount({ data: 1 }).then(() => {
-                router.invalidate();
-              });
-            }}
-          >
-            Add 1 to {state as unknown as number}?
-          </Button>
-        </CardContent>
-      </Card>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Total Expenses</CardTitle>
+        <CardDescription>The total amount of expenses.</CardDescription>
+      </CardHeader>
+      <CardContent>{data?.total ?? 0}</CardContent>
+    </Card>
   );
 };
 
 export const Route = createFileRoute("/")({
+  loader: async ({ context: { queryClient } }) =>
+    queryClient.ensureQueryData(totalExpensesQueryOptions),
   component: Home,
-  loader: async () => await getCount(),
 });
