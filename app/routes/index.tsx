@@ -9,6 +9,7 @@ import {
   CardDescription,
   CardContent,
 } from "components/core";
+import { Layout } from "components/layout";
 
 // TODO: figure out appropriate use of serverOnly vs createServerFn (createServerFn always returns a ReadableStream? How to type that appropriately?)
 const getTotalExpenses = serverOnly<Promise<{ total: number }>>(async () => {
@@ -27,13 +28,15 @@ const Home = () => {
   const { data } = useSuspenseQuery(totalExpensesQueryOptions);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Total Expenses</CardTitle>
-        <CardDescription>The total amount of expenses.</CardDescription>
-      </CardHeader>
-      <CardContent>{data?.total ?? 0}</CardContent>
-    </Card>
+    <Layout>
+      <Card>
+        <CardHeader>
+          <CardTitle>Total Expenses</CardTitle>
+          <CardDescription>The total amount of expenses.</CardDescription>
+        </CardHeader>
+        <CardContent>{data?.total ?? 0}</CardContent>
+      </Card>
+    </Layout>
   );
 };
 
