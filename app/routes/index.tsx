@@ -2,6 +2,8 @@ import * as fs from "node:fs";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/start";
 
+import { Button } from "components/core";
+
 const filePath = "count.txt";
 
 const readCount = async () => {
@@ -28,17 +30,15 @@ const Home = () => {
   const state = Route.useLoaderData();
 
   return (
-    <button
-      type="button"
+    <Button
       onClick={() => {
         updateCount({ data: 1 }).then(() => {
           router.invalidate();
         });
       }}
-      className="bg-blue-500 m-2 px-3 py-2 rounded-sm"
     >
       Add 1 to {state as unknown as number}?
-    </button>
+    </Button>
   );
 };
 
