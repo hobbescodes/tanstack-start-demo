@@ -19,10 +19,16 @@ const config: KnipConfig = {
   ignore: [
     // Generated route tree
     "app/routeTree.gen.ts",
+    // TODO: set up knip for monorepo
+    "server/**",
   ],
   ignoreDependencies: [
     // Peer dependency
     "@vitejs/plugin-react",
+    // Tailwind CSS for styling, implemented through vite plugin
+    "tailwindcss",
+    // TODO: remove when zod is used in app
+    "zod",
   ],
 };
 
