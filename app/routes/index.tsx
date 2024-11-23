@@ -8,13 +8,12 @@ import {
   CardDescription,
   CardContent,
 } from "components/core";
-import { api } from "lib/api";
 
 // TODO: figure out appropriate use of serverOnly vs createServerFn (createServerFn always returns a ReadableStream? How to type that appropriately?)
 const getTotalExpenses = serverOnly(async () => {
-  const response = await api.expenses["total-expenses"].$get();
+  const response = await fetch("http://localhost:3000/api/expenses/total");
 
-  return await response.json();
+  return (await response.json()) as { total: number };
 });
 
 const Home = () => {
