@@ -13,6 +13,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
 import appCss from "lib/styles/main.css?url";
+import { Layout } from "components/layout";
 
 const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
   return (
@@ -34,7 +35,9 @@ const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
 const RootComponent = () => {
   return (
     <RootDocument>
-      <Outlet />
+      <Layout>
+        <Outlet />
+      </Layout>
     </RootDocument>
   );
 };
@@ -59,5 +62,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     component: RootComponent,
     // TODO: customize error component
     errorComponent: ({ error }) => <ErrorComponent error={error} />,
+    // TODO: add custom not found component
   }
 );

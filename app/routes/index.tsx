@@ -27,15 +27,13 @@ const Home = () => {
   const { data } = useSuspenseQuery(totalExpensesQueryOptions);
 
   return (
-    <div className="flex flex-col max-w-4xl mx-auto p-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>Total Expenses</CardTitle>
-          <CardDescription>The total amount of expenses.</CardDescription>
-        </CardHeader>
-        <CardContent>{data?.total ?? 0}</CardContent>
-      </Card>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Total Expenses</CardTitle>
+        <CardDescription>The total amount of expenses.</CardDescription>
+      </CardHeader>
+      <CardContent>{data?.total ?? 0}</CardContent>
+    </Card>
   );
 };
 
