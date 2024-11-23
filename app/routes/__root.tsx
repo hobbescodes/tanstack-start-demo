@@ -4,6 +4,7 @@ import {
   ScrollRestoration,
   createRootRouteWithContext,
 } from "@tanstack/react-router";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Meta, Scripts } from "@tanstack/start";
 
 import { RouterDevTools } from "components/dev";
@@ -22,6 +23,8 @@ const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
       <body>
         {children}
         <ScrollRestoration />
+        <RouterDevTools />
+        <ReactQueryDevtools />
         <Scripts />
       </body>
     </html>
@@ -32,7 +35,6 @@ const RootComponent = () => {
   return (
     <RootDocument>
       <Outlet />
-      <RouterDevTools />
     </RootDocument>
   );
 };
