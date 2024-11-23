@@ -20,6 +20,9 @@
     "strictNullChecks": true,
 
     // Setup
-    "baseUrl": "app"
+    "baseUrl": "app",
+    "paths": {
+      "@/*": ["./app/*"]
+    }
   }
 }
