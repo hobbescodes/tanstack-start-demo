@@ -9,6 +9,8 @@ import { RouterDevTools } from "components/dev";
 
 import type { ReactNode } from "react";
 
+import "lib/styles/main.css";
+
 const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
   return (
     <html lang="en">

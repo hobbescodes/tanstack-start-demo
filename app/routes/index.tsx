@@ -35,6 +35,7 @@ const Home = () => {
           router.invalidate();
         });
       }}
+      className="bg-blue-500 m-2 px-3 py-2 rounded-sm"
     >
       Add 1 to {state}?
     </button>
