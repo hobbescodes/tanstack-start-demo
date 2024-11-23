@@ -21,10 +21,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
-      "suspicious": {
-        "noConsoleLog": "error"
-      }
+      "recommended": true
     }
   },
   "javascript": {
