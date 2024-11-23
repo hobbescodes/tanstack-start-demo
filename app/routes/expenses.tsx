@@ -2,6 +2,15 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { serverOnly } from "@tanstack/start";
 
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "components/core";
 import { Layout } from "components/layout";
 
 import type { OutputExpense } from "lib/mock/expenses";
@@ -23,17 +32,25 @@ const Expenses = () => {
 
   return (
     <Layout>
-      <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-bold">Expenses</h1>
-        <div className="flex flex-col gap-4">
+      <Table className="max-w-xl mx-auto">
+        <TableCaption>A list of all your expenses</TableCaption>
+        <TableHeader>
+          <TableRow className="bg-primary text-primary-foreground hover:bg-primary">
+            <TableHead className="w-[100px]">ID</TableHead>
+            <TableHead>Title</TableHead>
+            <TableHead>Amount (USD)</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {data?.map(({ id, title, amount }) => (
-            <div key={id} className="flex gap-4 items-center">
-              <h2 className="text-xl font-bold">{title}</h2>
-              <p className="text-sm text-muted-foreground">{amount} USD</p>
-            </div>
+            <TableRow key={id}>
+              <TableCell>{id}</TableCell>
+              <TableCell>{title}</TableCell>
+              <TableCell>{amount}</TableCell>
+            </TableRow>
           ))}
-        </div>
-      </div>
+        </TableBody>
+      </Table>
     </Layout>
   );
 };
