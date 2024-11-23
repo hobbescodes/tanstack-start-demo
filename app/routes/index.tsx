@@ -1,40 +1,24 @@
-import * as fs from "node:fs";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/start";
+import { createFileRoute, useLoaderData } from "@tanstack/react-router";
+import { serverOnly } from "@tanstack/start";
 
 import {
-  Button,
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
 } from "components/core";
+import { api } from "lib/api";
 
-const filePath = "count.txt";
+// TODO: figure out appropriate use of serverOnly vs createServerFn (createServerFn always returns a ReadableStream? How to type that appropriately?)
+const getTotalExpenses = serverOnly(async () => {
+  const response = await api.expenses["total-expenses"].$get();
 
-const readCount = async () => {
-  return Number.parseInt(
-    await fs.promises.readFile(filePath, "utf-8").catch(() => "0")
-  );
-};
-
-const getCount = createServerFn({
-  method: "GET",
-}).handler(() => {
-  return readCount();
+  return await response.json();
 });
 
-const updateCount = createServerFn({ method: "POST" })
-  .validator((d: number) => d)
-  .handler(async ({ data }) => {
-    const count = await readCount();
-    await fs.promises.writeFile(filePath, `${count + data}`);
-  });
-
 const Home = () => {
-  const router = useRouter();
-  const state = Route.useLoaderData();
+  const data = useLoaderData({ from: "/" });
 
   return (
     <div className="flex flex-col max-w-4xl mx-auto p-4">
@@ -43,23 +27,13 @@ const Home = () => {
           <CardTitle>Total Expenses</CardTitle>
           <CardDescription>The total amount of expenses.</CardDescription>
         </CardHeader>
-        <CardContent>
-          <Button
-            onClick={() => {
-              updateCount({ data: 1 }).then(() => {
-                router.invalidate();
-              });
-            }}
-          >
-            Add 1 to {state as unknown as number}?
-          </Button>
-        </CardContent>
+        <CardContent>{data?.total ?? 0}</CardContent>
       </Card>
     </div>
   );
 };
 
 export const Route = createFileRoute("/")({
+  loader: async () => await getTotalExpenses(),
   component: Home,
-  loader: async () => await getCount(),
 });

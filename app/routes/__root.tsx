@@ -1,4 +1,5 @@
 import {
+  ErrorComponent,
   Outlet,
   ScrollRestoration,
   createRootRoute,
@@ -9,7 +10,7 @@ import { RouterDevTools } from "components/dev";
 
 import type { ReactNode } from "react";
 
-import "lib/styles/main.css";
+import appCss from "lib/styles/main.css?url";
 
 const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
   return (
@@ -49,6 +50,9 @@ export const Route = createRootRoute({
         title: "TanStack Start Demo",
       },
     ],
+    links: [{ rel: "stylesheet", href: appCss }],
   }),
   component: RootComponent,
+  // TODO: customize error component
+  errorComponent: ({ error }) => <ErrorComponent error={error} />,
 });
