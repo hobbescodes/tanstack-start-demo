@@ -13,7 +13,6 @@ import type { QueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
 import appCss from "lib/styles/main.css?url";
-import { Layout } from "components/layout";
 
 const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
   return (
@@ -35,9 +34,7 @@ const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
 const RootComponent = () => {
   return (
     <RootDocument>
-      <Layout>
-        <Outlet />
-      </Layout>
+      <Outlet />
     </RootDocument>
   );
 };

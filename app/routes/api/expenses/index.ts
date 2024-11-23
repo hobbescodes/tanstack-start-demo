@@ -5,7 +5,7 @@ import { createExpenseSchema, fakeExpenses } from "lib/mock/expenses";
 
 export const Route = createAPIFileRoute("/api/expenses")({
   GET: () => {
-    return json({ data: fakeExpenses });
+    return json(fakeExpenses);
   },
   POST: async ({ request }) => {
     const data = await request.json();
