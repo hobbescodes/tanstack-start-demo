@@ -31,6 +31,11 @@ export const expensesRoute = new Hono()
 
     return c.json(expense);
   })
+  .get("/total-expenses", async (c) => {
+    const total = fakeExpenses.reduce((acc, cur) => acc + cur.amount, 0);
+
+    return c.json({ total });
+  })
   .get("/:id{[0-9]+}", async (c) => {
     const id = Number.parseInt(c.req.param("id"));
 
