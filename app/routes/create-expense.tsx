@@ -28,7 +28,7 @@ const RouteComponent = () => {
   const queryClient = useQueryClient();
 
   const { mutateAsync } = useMutation({
-    mutationKey: ["add-expense"],
+    mutationKey: ["expense", "create"],
     mutationFn: async (newExpense: InputExpense) =>
       await addExpense({ data: newExpense }),
     onMutate: async (expense) => {

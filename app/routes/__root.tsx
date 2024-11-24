@@ -35,7 +35,7 @@ const RootComponent = () => {
     <RootDocument>
       <div className="grid min-h-dvh w-full grid-rows-layout">
         <Header />
-        <main className="mx-auto flex w-full max-w-7xl items-center justify-center">
+        <main className="mx-auto flex w-full max-w-7xl p-4 justify-center">
           <Outlet />
         </main>
         <Footer />

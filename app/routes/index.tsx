@@ -19,7 +19,7 @@ const getTotalExpenses = createServerFn({
 });
 
 const totalExpensesQueryOptions = queryOptions({
-  queryKey: ["total-expenses"],
+  queryKey: ["expenses", "total"],
   queryFn: () => getTotalExpenses(),
 });
 
@@ -27,13 +27,15 @@ const Home = () => {
   const { data } = useSuspenseQuery(totalExpensesQueryOptions);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Total Expenses</CardTitle>
-        <CardDescription>The total amount of expenses.</CardDescription>
-      </CardHeader>
-      <CardContent>{data.total}</CardContent>
-    </Card>
+    <div className="w-full flex flex-col items-center">
+      <Card className="w-full max-w-xl">
+        <CardHeader>
+          <CardTitle>Total Expenses</CardTitle>
+          <CardDescription>The total amount of expenses.</CardDescription>
+        </CardHeader>
+        <CardContent>{data.total}</CardContent>
+      </Card>
+    </div>
   );
 };
 

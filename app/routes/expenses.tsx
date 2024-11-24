@@ -36,7 +36,7 @@ const getAllExpenses = createServerFn({ method: "GET" }).handler(
 );
 
 export const allExpensesQueryOptions = queryOptions({
-  queryKey: ["all-expenses"],
+  queryKey: ["expenses"],
   queryFn: () => getAllExpenses(),
 });
 
@@ -66,7 +66,9 @@ const columns = [
 const Expenses = () => {
   const { data } = useSuspenseQuery(allExpensesQueryOptions);
 
-  const isCreatingExpense = useIsMutating({ mutationKey: ["add-expense"] });
+  const isCreatingExpense = useIsMutating({
+    mutationKey: ["expense", "create"],
+  });
 
   const table = useReactTable({
     data,
