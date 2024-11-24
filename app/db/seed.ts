@@ -1,7 +1,7 @@
 import { reset, seed } from "drizzle-seed";
 import { drizzle } from "drizzle-orm/node-postgres";
 
-import { expensesTable } from "db/schema";
+import { expensesTable } from "./schema";
 
 const main = async () => {
   const db = drizzle(process.env.DATABASE_URL!, { casing: "snake_case" });
