@@ -6,6 +6,7 @@ import { zodValidator } from "@tanstack/zod-form-adapter";
 
 import { Button, Input, Label } from "components/core";
 import { insertExpensesSchema } from "db/schema";
+import { API_BASE_URL } from "lib/config/env";
 import { cn } from "lib/utils";
 import { allExpensesQueryOptions } from "routes/expenses";
 
@@ -14,7 +15,7 @@ import type { InputExpense } from "db/schema";
 const addExpense = createServerFn()
   .validator((expense: unknown) => insertExpensesSchema.parse(expense))
   .handler(async ({ data }) => {
-    await fetch("http://localhost:3000/api/expenses", {
+    await fetch(`${API_BASE_URL}/api/expenses`, {
       method: "POST",
       body: JSON.stringify(data),
     });

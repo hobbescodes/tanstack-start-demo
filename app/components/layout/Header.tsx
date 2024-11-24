@@ -16,7 +16,7 @@ const Header = () => {
   return (
     <header className="sticky top-0 w-full flex justify-between items-center py-4 px-6 border-b border-border z-50 bg-background">
       <Link to="/" className="font-bold">
-        TanStack Start Demo
+        Expense Tracker
       </Link>
       <div className="flex gap-4">
         {NAV_LINKS.map(({ to, label, activeProps, ...rest }) => (

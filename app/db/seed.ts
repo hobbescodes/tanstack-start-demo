@@ -1,10 +1,11 @@
 import { reset, seed } from "drizzle-seed";
 import { drizzle } from "drizzle-orm/node-postgres";
 
-import { expensesTable } from "./schema";
+import { expensesTable } from "db/schema";
+import { DATABASE_URL } from "lib/config/env";
 
 const main = async () => {
-  const db = drizzle(process.env.DATABASE_URL!, { casing: "snake_case" });
+  const db = drizzle(DATABASE_URL!, { casing: "snake_case" });
   await reset(db, { expensesTable });
   await seed(db, { expensesTable }).refine((f) => ({
     expensesTable: {

@@ -1,6 +1,7 @@
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/start";
+
 import {
   Card,
   CardHeader,
@@ -8,12 +9,12 @@ import {
   CardDescription,
   CardContent,
 } from "components/core";
+import { API_BASE_URL } from "lib/config/env";
 
 const getTotalExpenses = createServerFn({
   method: "GET",
 }).handler(async (): Promise<{ total: number }> => {
-  // TODO: set up fetch for production
-  const response = await fetch("http://localhost:3000/api/expenses/total");
+  const response = await fetch(`${API_BASE_URL}/api/expenses/total`);
 
   return response.json();
 });
