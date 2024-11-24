@@ -96,6 +96,7 @@ const RouteComponent = () => {
               <Input
                 id={name}
                 type="number"
+                min={0}
                 value={state.value}
                 onChange={(e) => handleChange(e.target.value)}
                 onBlur={handleBlur}
