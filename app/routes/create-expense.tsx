@@ -60,7 +60,7 @@ const RouteComponent = () => {
           }}
         >
           {({ name, state, handleBlur, handleChange }) => (
-            <div className="flex flex-col gap-2">
+            <div className="relative flex flex-col gap-2">
               <Label htmlFor={name}>Title</Label>
               <Input
                 id={name}
@@ -72,7 +72,7 @@ const RouteComponent = () => {
               />
               <em
                 className={cn(
-                  "text-red-400 h-5 text-sm",
+                  "absolute top-0 right-0 text-red-400 h-5 text-sm",
                   state.meta.errors && state.meta.isDirty
                     ? "visible"
                     : "invisible"
@@ -88,7 +88,7 @@ const RouteComponent = () => {
           validators={{ onChange: insertExpensesSchema.shape.amount }}
         >
           {({ name, state, handleBlur, handleChange }) => (
-            <div className="flex flex-col gap-2">
+            <div className="relative flex flex-col gap-2">
               <Label htmlFor={name}>Amount</Label>
               <Input
                 id={name}
@@ -99,7 +99,7 @@ const RouteComponent = () => {
               />
               <em
                 className={cn(
-                  "text-red-400 h-5 text-sm",
+                  "absolute top-0 right-0 text-red-400 h-5 text-sm",
                   state.meta.errors && state.meta.isDirty
                     ? "visible"
                     : "invisible"
