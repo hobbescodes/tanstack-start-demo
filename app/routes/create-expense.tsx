@@ -42,7 +42,7 @@ const RouteComponent = () => {
   const { handleSubmit, Field, Subscribe, reset } = useForm({
     defaultValues: {
       title: "",
-      amount: "0",
+      amount: "",
     },
     asyncDebounceMs: 500,
     validatorAdapter: zodValidator(),
@@ -105,6 +105,7 @@ const RouteComponent = () => {
               <Input
                 id={name}
                 type="number"
+                placeholder="4.20"
                 min={0}
                 step={0.01}
                 value={state.value}
