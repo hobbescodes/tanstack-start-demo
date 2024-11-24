@@ -21,6 +21,9 @@ export const createRouter = () => {
       onSuccess: () => {
         queryClient.invalidateQueries();
       },
+      onError: () => {
+        queryClient.invalidateQueries();
+      },
     }),
     defaultOptions: {
       queries: {

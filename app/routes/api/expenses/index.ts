@@ -11,6 +11,8 @@ export const Route = createAPIFileRoute("/api/expenses")({
     return json(expenses);
   },
   POST: async ({ request }) => {
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
     const data = await request.json();
 
     const expense = insertExpensesSchema.parse(data);
