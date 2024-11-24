@@ -1,10 +1,17 @@
 import {
   queryOptions,
+  useIsMutating,
   useSuspenseQuery,
-  useQuery,
 } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import { createServerFn } from "@tanstack/start";
+import { formatInTimeZone } from "date-fns-tz";
 
 import {
   Table,
@@ -15,8 +22,9 @@ import {
   TableHeader,
   TableRow,
 } from "components/core";
+import { cn } from "lib/utils";
 
-import type { InputExpense, OutputExpense } from "../db/schema";
+import type { OutputExpense } from "db/schema";
 
 const getAllExpenses = createServerFn({ method: "GET" }).handler(
   async (): Promise<OutputExpense[]> => {
@@ -27,54 +35,83 @@ const getAllExpenses = createServerFn({ method: "GET" }).handler(
   }
 );
 
-const allExpensesQueryOptions = queryOptions({
-  queryKey: ["all-expenses"],
+export const allExpensesQueryOptions = queryOptions({
+  queryKey: ["expenses"],
   queryFn: () => getAllExpenses(),
 });
 
-export const loadingExpenseQueryOptions = queryOptions<{
-  expense?: InputExpense;
-}>({
-  queryKey: ["loading-expense"],
-  queryFn: async () => ({}),
-  staleTime: Number.POSITIVE_INFINITY,
-});
+const columnHelper = createColumnHelper<OutputExpense>();
+
+const columns = [
+  columnHelper.accessor("title", {
+    header: "Title",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("amount", {
+    header: "Amount (USD)",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("createdAt", {
+    header: "Created At",
+    cell: (info) => {
+      const value = info.getValue();
+
+      return value
+        ? formatInTimeZone(value, "America/Chicago", "MM/dd/yyyy")
+        : "-";
+    },
+  }),
+];
 
 const Expenses = () => {
   const { data } = useSuspenseQuery(allExpensesQueryOptions);
 
-  const maxId = data.reduce((acc, cur) => Math.max(acc, cur.id), 0);
+  const isCreatingExpense = useIsMutating({
+    mutationKey: ["expense", "create"],
+  });
 
-  const { data: loadingExpense } = useQuery({
-    ...loadingExpenseQueryOptions,
-    select: ({ expense }) => expense,
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
   });
 
   return (
     <Table className="max-w-xl mx-auto">
       <TableCaption>A list of all your expenses</TableCaption>
       <TableHeader>
-        <TableRow className="bg-primary text-primary-foreground hover:bg-primary">
-          <TableHead className="w-[100px]">ID</TableHead>
-          <TableHead>Title</TableHead>
-          <TableHead>Amount (USD)</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data.map(({ id, title, amount }) => (
-          <TableRow key={id}>
-            <TableCell>{id}</TableCell>
-            <TableCell>{title}</TableCell>
-            <TableCell>{amount}</TableCell>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow
+            key={headerGroup.id}
+            className="bg-primary text-primary-foreground hover:bg-primary"
+          >
+            {headerGroup.headers.map((header) => (
+              <TableHead key={header.id}>
+                {flexRender(
+                  header.column.columnDef.header,
+                  header.getContext()
+                )}
+              </TableHead>
+            ))}
           </TableRow>
         ))}
-        {loadingExpense && (
-          <TableRow className="opacity-30">
-            <TableCell>{maxId + 1}</TableCell>
-            <TableCell>{loadingExpense?.title}</TableCell>
-            <TableCell>{loadingExpense?.amount}</TableCell>
+      </TableHeader>
+      <TableBody>
+        {table.getRowModel().rows.map((row) => (
+          <TableRow
+            key={row.id}
+            className={cn(
+              "even:bg-muted",
+              isCreatingExpense && "last:opacity-30"
+            )}
+          >
+            {row.getVisibleCells().map((cell) => (
+              <TableCell key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
           </TableRow>
-        )}
+        ))}
       </TableBody>
     </Table>
   );

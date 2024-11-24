@@ -7,7 +7,7 @@ import { zodValidator } from "@tanstack/zod-form-adapter";
 import { Button, Input, Label } from "components/core";
 import { insertExpensesSchema } from "db/schema";
 import { cn } from "lib/utils";
-import { loadingExpenseQueryOptions } from "routes/expenses";
+import { allExpensesQueryOptions } from "routes/expenses";
 
 import type { InputExpense } from "db/schema";
 
@@ -20,29 +20,45 @@ const addExpense = createServerFn()
     });
   });
 
+const now = new Date().toISOString();
+
 const RouteComponent = () => {
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
   const { mutateAsync } = useMutation({
+    mutationKey: ["expense", "create"],
     mutationFn: async (newExpense: InputExpense) =>
       await addExpense({ data: newExpense }),
     onMutate: async (expense) => {
-      navigate({ to: "/expenses" });
+      const previousExpenses = await queryClient.ensureQueryData(
+        allExpensesQueryOptions
+      );
 
-      queryClient.setQueryData(loadingExpenseQueryOptions.queryKey, {
-        expense,
-      });
+      const maxId = previousExpenses.reduce(
+        (acc, cur) => Math.max(acc, cur.id),
+        0
+      );
+
+      queryClient.setQueryData(allExpensesQueryOptions.queryKey, [
+        ...previousExpenses,
+        {
+          id: maxId + 1,
+          title: expense.title,
+          amount: expense.amount,
+          createdAt: now,
+        },
+      ]);
+
+      navigate({ to: "/expenses" });
     },
-    onSettled: () =>
-      queryClient.setQueryData(loadingExpenseQueryOptions.queryKey, {}),
   });
 
   const { handleSubmit, Field, Subscribe, reset } = useForm({
     defaultValues: {
       title: "",
-      amount: "0",
+      amount: "",
     },
     asyncDebounceMs: 500,
     validatorAdapter: zodValidator(),
@@ -105,6 +121,7 @@ const RouteComponent = () => {
               <Input
                 id={name}
                 type="number"
+                placeholder="4.20"
                 min={0}
                 step={0.01}
                 value={state.value}
