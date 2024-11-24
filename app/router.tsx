@@ -18,10 +18,7 @@ declare module "@tanstack/react-router" {
 export const createRouter = () => {
   const queryClient = new QueryClient({
     mutationCache: new MutationCache({
-      onSuccess: () => {
-        queryClient.invalidateQueries();
-      },
-      onError: () => {
+      onSettled: () => {
         queryClient.invalidateQueries();
       },
     }),
