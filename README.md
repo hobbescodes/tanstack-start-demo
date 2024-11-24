@@ -3,10 +3,11 @@
 	<em>A basic expense tracker app to get off the ground with TanStack libraries.</em>
 </p>
 <p align="center">
-	<img src="https://img.shields.io/github/license/hobbescodes/tanstack-start-demo?style=default&logo=opensourceinitiative&logoColor=white&color=0080ff" alt="license">
-	<img src="https://img.shields.io/github/last-commit/hobbescodes/tanstack-start-demo?style=default&logo=git&logoColor=white&color=0080ff" alt="last-commit">
-	<img src="https://img.shields.io/github/languages/top/hobbescodes/tanstack-start-demo?style=default&color=0080ff" alt="repo-top-language">
-	<img src="https://img.shields.io/github/languages/count/hobbescodes/tanstack-start-demo?style=default&color=0080ff" alt="repo-language-count">
+	<img src="https://img.shields.io/github/license/hobbescodes/tanstack-start-demo" alt="license">
+	<img src="https://img.shields.io/github/last-commit/hobbescodes/tanstack-start-demo
+    " alt="last-commit">
+	<img src="https://img.shields.io/github/languages/top/hobbescodes/tanstack-start-demo
+    " alt="repo-top-language">
 </p>
 <br>
 
