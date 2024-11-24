@@ -1,6 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-form-adapter";
 
 import { Button, Input, Label } from "components/core";
@@ -12,6 +12,8 @@ import type { InputExpense } from "lib/mock/expenses";
 const RouteComponent = () => {
   const queryClient = useQueryClient();
 
+  const navigate = useNavigate();
+
   const { mutateAsync } = useMutation({
     mutationFn: async (newExpense: InputExpense) => {
       await fetch("http://localhost:3000/api/expenses", {
@@ -21,6 +23,7 @@ const RouteComponent = () => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["all-expenses"] });
+      navigate({ to: "/expenses" });
     },
   });
 
