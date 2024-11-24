@@ -20,9 +20,6 @@
     "strictNullChecks": true,
 
     // Setup
-    "baseUrl": "app",
-    "paths": {
-      "@server/*": ["../server/src/*"]
-    }
+    "baseUrl": "app"
   }
 }

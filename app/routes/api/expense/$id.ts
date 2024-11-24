@@ -1,13 +1,18 @@
 import { json } from "@tanstack/start";
 import { createAPIFileRoute } from "@tanstack/start/api";
+import { eq } from "drizzle-orm";
 
-import { fakeExpenses } from "lib/mock/expenses";
+import { db } from "db";
+import { expensesTable } from "db/schema";
 
 export const Route = createAPIFileRoute("/api/expense/$id")({
-  GET: ({ params }) => {
+  GET: async ({ params }) => {
     const id = Number.parseInt(params.id);
 
-    const expense = fakeExpenses.find((e) => e.id === id);
+    const [expense] = await db
+      .select()
+      .from(expensesTable)
+      .where(eq(expensesTable.id, id));
 
     if (!expense) {
       return new Response("Expense not found", { status: 404 });
@@ -15,16 +20,17 @@ export const Route = createAPIFileRoute("/api/expense/$id")({
 
     return json(expense);
   },
-  DELETE: ({ params }) => {
+  DELETE: async ({ params }) => {
     const id = Number.parseInt(params.id);
 
-    const deletedExpense = fakeExpenses.find((e) => e.id === id);
+    const [deletedExpense] = await db
+      .delete(expensesTable)
+      .where(eq(expensesTable.id, id))
+      .returning();
 
     if (!deletedExpense) {
       return new Response("Expense not found", { status: 404 });
     }
-
-    fakeExpenses.splice(fakeExpenses.indexOf(deletedExpense), 1);
 
     return json(deletedExpense);
   },

@@ -12,7 +12,10 @@ import {
   TableRow,
 } from "components/core";
 
-import type { OutputExpense } from "lib/mock/expenses";
+import type { selectExpensesSchema } from "../db/schema";
+import type { z } from "zod";
+
+type OutputExpense = z.infer<typeof selectExpensesSchema>;
 
 const getAllExpenses = createServerFn({ method: "GET" }).handler(
   async (): Promise<OutputExpense[]> => {

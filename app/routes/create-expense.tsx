@@ -5,13 +5,15 @@ import { createServerFn } from "@tanstack/start";
 import { zodValidator } from "@tanstack/zod-form-adapter";
 
 import { Button, Input, Label } from "components/core";
-import { createExpenseSchema } from "lib/mock/expenses";
+import { insertExpensesSchema } from "../db/schema";
 import { cn } from "lib/utils";
 
-import type { InputExpense } from "lib/mock/expenses";
+import type { z } from "zod";
+
+type InputExpense = z.infer<typeof insertExpensesSchema>;
 
 const addExpense = createServerFn()
-  .validator((expense: unknown) => createExpenseSchema.parse(expense))
+  .validator((expense: unknown) => insertExpensesSchema.parse(expense))
   .handler(async ({ data }) => {
     await fetch("http://localhost:3000/api/expenses", {
       method: "POST",
@@ -30,11 +32,11 @@ const RouteComponent = () => {
   const { handleSubmit, Field, Subscribe, reset } = useForm({
     defaultValues: {
       title: "",
-      amount: 0,
+      amount: "0",
     },
     validatorAdapter: zodValidator(),
     validators: {
-      onChange: createExpenseSchema,
+      onChange: insertExpensesSchema,
     },
     onSubmit: async ({ value }) => await mutateAsync(value),
   });
@@ -53,7 +55,7 @@ const RouteComponent = () => {
         <Field
           name="title"
           validators={{
-            onChange: createExpenseSchema.shape.title,
+            onChange: insertExpensesSchema.shape.title,
           }}
         >
           {({ name, state, handleBlur, handleChange }) => (
@@ -82,7 +84,7 @@ const RouteComponent = () => {
         </Field>
         <Field
           name="amount"
-          validators={{ onChange: createExpenseSchema.shape.amount }}
+          validators={{ onChange: insertExpensesSchema.shape.amount }}
         >
           {({ name, state, handleBlur, handleChange }) => (
             <div className="flex flex-col gap-2">
@@ -91,7 +93,7 @@ const RouteComponent = () => {
                 id={name}
                 type="number"
                 value={state.value}
-                onChange={(e) => handleChange(e.target.valueAsNumber)}
+                onChange={(e) => handleChange(e.target.value)}
                 onBlur={handleBlur}
               />
               <em

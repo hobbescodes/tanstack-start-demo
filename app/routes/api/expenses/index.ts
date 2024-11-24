@@ -1,22 +1,25 @@
 import { json } from "@tanstack/start";
 import { createAPIFileRoute } from "@tanstack/start/api";
 
-import { createExpenseSchema, fakeExpenses } from "lib/mock/expenses";
+import { db } from "db";
+import { expensesTable, insertExpensesSchema } from "db/schema";
 
 export const Route = createAPIFileRoute("/api/expenses")({
-  GET: () => {
-    return json(fakeExpenses);
+  GET: async () => {
+    const expenses = await db.select().from(expensesTable);
+
+    return json(expenses);
   },
   POST: async ({ request }) => {
     const data = await request.json();
 
-    const expense = createExpenseSchema.parse(data);
+    const expense = insertExpensesSchema.parse(data);
 
     if (!expense) {
       return new Response("Invalid expense data", { status: 400 });
     }
 
-    fakeExpenses.push({ id: fakeExpenses.length + 1, ...expense });
+    await db.insert(expensesTable).values(expense);
 
     return json(expense);
   },
