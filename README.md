@@ -4,10 +4,8 @@
 </p>
 <p align="center">
 	<img src="https://img.shields.io/github/license/hobbescodes/tanstack-start-demo" alt="license">
-	<img src="https://img.shields.io/github/last-commit/hobbescodes/tanstack-start-demo
-    " alt="last-commit">
-	<img src="https://img.shields.io/github/languages/top/hobbescodes/tanstack-start-demo
-    " alt="repo-top-language">
+	<img src="https://img.shields.io/github/last-commit/hobbescodes/tanstack-start-demo" alt="last-commit">
+	<img src="https://img.shields.io/github/languages/top/hobbescodes/tanstack-start-demo" alt="repo-top-language">
 </p>
 <br>
 
