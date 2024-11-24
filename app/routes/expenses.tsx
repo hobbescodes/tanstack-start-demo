@@ -24,7 +24,7 @@ import {
 } from "components/core";
 import { cn } from "lib/utils";
 
-import type { InputExpense, OutputExpense } from "db/schema";
+import type { OutputExpense } from "db/schema";
 
 const getAllExpenses = createServerFn({ method: "GET" }).handler(
   async (): Promise<OutputExpense[]> => {
@@ -38,14 +38,6 @@ const getAllExpenses = createServerFn({ method: "GET" }).handler(
 export const allExpensesQueryOptions = queryOptions({
   queryKey: ["all-expenses"],
   queryFn: () => getAllExpenses(),
-});
-
-export const loadingExpenseQueryOptions = queryOptions<{
-  expense?: InputExpense;
-}>({
-  queryKey: ["loading-expense"],
-  queryFn: async () => ({}),
-  staleTime: Number.POSITIVE_INFINITY,
 });
 
 const columnHelper = createColumnHelper<OutputExpense>();
