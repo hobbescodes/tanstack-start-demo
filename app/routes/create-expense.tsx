@@ -25,7 +25,8 @@ const RouteComponent = () => {
   const navigate = useNavigate();
 
   const { mutateAsync } = useMutation({
-    mutationFn: (newExpense: InputExpense) => addExpense({ data: newExpense }),
+    mutationFn: async (newExpense: InputExpense) =>
+      await addExpense({ data: newExpense }),
     onSuccess: () => navigate({ to: "/expenses" }),
   });
 
