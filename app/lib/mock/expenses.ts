@@ -15,7 +15,7 @@ export type InputExpense = z.infer<typeof createExpenseSchema>;
 export type OutputExpense = z.infer<typeof expenseSchema>;
 
 export const fakeExpenses: OutputExpense[] = [
-  { id: 1, title: "Coffee", amount: 10 },
-  { id: 2, title: "Lunch", amount: 20 },
-  { id: 3, title: "Dinner", amount: 30 },
+  { id: 1, title: "Rent", amount: 550 },
+  { id: 2, title: "WiFi", amount: 100 },
+  { id: 3, title: "Groceries", amount: 200 },
 ];
