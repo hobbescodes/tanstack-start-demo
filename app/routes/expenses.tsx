@@ -1,4 +1,8 @@
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useSuspenseQuery,
+  useQuery,
+} from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/start";
 
@@ -12,10 +16,11 @@ import {
   TableRow,
 } from "components/core";
 
-import type { selectExpensesSchema } from "../db/schema";
+import type { insertExpensesSchema, selectExpensesSchema } from "../db/schema";
 import type { z } from "zod";
 
 type OutputExpense = z.infer<typeof selectExpensesSchema>;
+type InputExpense = z.infer<typeof insertExpensesSchema>;
 
 const getAllExpenses = createServerFn({ method: "GET" }).handler(
   async (): Promise<OutputExpense[]> => {
@@ -31,8 +36,23 @@ const allExpensesQueryOptions = queryOptions({
   queryFn: () => getAllExpenses(),
 });
 
+export const loadingExpenseQueryOptions = queryOptions<{
+  expense?: InputExpense;
+}>({
+  queryKey: ["loading-expense"],
+  queryFn: async () => ({}),
+  staleTime: Number.POSITIVE_INFINITY,
+});
+
 const Expenses = () => {
   const { data } = useSuspenseQuery(allExpensesQueryOptions);
+
+  const maxId = data.reduce((acc, cur) => Math.max(acc, cur.id), 0);
+
+  const { data: loadingExpense } = useQuery({
+    ...loadingExpenseQueryOptions,
+    select: ({ expense }) => expense,
+  });
 
   return (
     <Table className="max-w-xl mx-auto">
@@ -52,6 +72,13 @@ const Expenses = () => {
             <TableCell>{amount}</TableCell>
           </TableRow>
         ))}
+        {loadingExpense && (
+          <TableRow className="opacity-30">
+            <TableCell>{maxId + 1}</TableCell>
+            <TableCell>{loadingExpense?.title}</TableCell>
+            <TableCell>{loadingExpense?.amount}</TableCell>
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );
