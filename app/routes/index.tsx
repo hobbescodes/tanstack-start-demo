@@ -32,7 +32,7 @@ const Home = () => {
         <CardTitle>Total Expenses</CardTitle>
         <CardDescription>The total amount of expenses.</CardDescription>
       </CardHeader>
-      <CardContent>{data?.total ?? 0}</CardContent>
+      <CardContent>{data.total}</CardContent>
     </Card>
   );
 };

@@ -42,7 +42,7 @@ const Expenses = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data?.map(({ id, title, amount }) => (
+        {data.map(({ id, title, amount }) => (
           <TableRow key={id}>
             <TableCell>{id}</TableCell>
             <TableCell>{title}</TableCell>
