@@ -1,12 +1,13 @@
 import { useForm } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/start";
 import { zodValidator } from "@tanstack/zod-form-adapter";
 
 import { Button, Input, Label } from "components/core";
-import { insertExpensesSchema } from "../db/schema";
+import { insertExpensesSchema } from "db/schema";
 import { cn } from "lib/utils";
+import { loadingExpenseQueryOptions } from "routes/expenses";
 
 import type { z } from "zod";
 
@@ -24,10 +25,20 @@ const addExpense = createServerFn()
 const RouteComponent = () => {
   const navigate = useNavigate();
 
+  const queryClient = useQueryClient();
+
   const { mutateAsync } = useMutation({
     mutationFn: async (newExpense: InputExpense) =>
       await addExpense({ data: newExpense }),
-    onSuccess: () => navigate({ to: "/expenses" }),
+    onMutate: async (expense) => {
+      navigate({ to: "/expenses" });
+
+      queryClient.setQueryData(loadingExpenseQueryOptions.queryKey, {
+        expense,
+      });
+    },
+    onSettled: () =>
+      queryClient.setQueryData(loadingExpenseQueryOptions.queryKey, {}),
   });
 
   const { handleSubmit, Field, Subscribe, reset } = useForm({
@@ -97,6 +108,7 @@ const RouteComponent = () => {
                 id={name}
                 type="number"
                 min={0}
+                step={0.01}
                 value={state.value}
                 onChange={(e) => handleChange(e.target.value)}
                 onBlur={handleBlur}

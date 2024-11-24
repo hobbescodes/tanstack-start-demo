@@ -35,6 +35,9 @@ export const insertExpensesSchema = createInsertSchema(expensesTable, {
       },
       { message: "Amount must be greater than 0" }
     ),
+}).omit({
+  id: true,
+  createdAt: true,
 });
 
 // Schema for selecting a Expenses - can be used to validate API responses
