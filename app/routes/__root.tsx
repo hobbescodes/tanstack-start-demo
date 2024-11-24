@@ -1,18 +1,17 @@
 import {
-  ErrorComponent,
   Outlet,
   ScrollRestoration,
   createRootRouteWithContext,
 } from "@tanstack/react-router";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { Meta, Scripts } from "@tanstack/start";
-
-import { RouterDevTools } from "components/dev";
 
 import type { QueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
 import appCss from "lib/styles/main.css?url";
+import { Footer, Header } from "components/layout";
 
 const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
   return (
@@ -23,7 +22,7 @@ const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
       <body>
         {children}
         <ScrollRestoration />
-        <RouterDevTools />
+        <TanStackRouterDevtools />
         <ReactQueryDevtools />
         <Scripts />
       </body>
@@ -34,7 +33,13 @@ const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
 const RootComponent = () => {
   return (
     <RootDocument>
-      <Outlet />
+      <div className="grid min-h-dvh w-full grid-rows-layout">
+        <Header />
+        <main className="mx-auto flex w-full max-w-7xl items-center justify-center">
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
     </RootDocument>
   );
 };
@@ -57,8 +62,5 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       links: [{ rel: "stylesheet", href: appCss }],
     }),
     component: RootComponent,
-    // TODO: customize error component
-    errorComponent: ({ error }) => <ErrorComponent error={error} />,
-    // TODO: add custom not found component
   }
 );
