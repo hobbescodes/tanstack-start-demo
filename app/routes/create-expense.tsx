@@ -35,9 +35,10 @@ const RouteComponent = () => {
       title: "",
       amount: "0",
     },
+    asyncDebounceMs: 500,
     validatorAdapter: zodValidator(),
     validators: {
-      onChange: insertExpensesSchema,
+      onChangeAsync: insertExpensesSchema,
     },
     onSubmit: async ({ value }) => await mutateAsync(value),
   });
@@ -55,8 +56,9 @@ const RouteComponent = () => {
       <div className="flex flex-col gap-4">
         <Field
           name="title"
+          asyncDebounceMs={500}
           validators={{
-            onChange: insertExpensesSchema.shape.title,
+            onChangeAsync: insertExpensesSchema.shape.title,
           }}
         >
           {({ name, state, handleBlur, handleChange }) => (
@@ -85,7 +87,8 @@ const RouteComponent = () => {
         </Field>
         <Field
           name="amount"
-          validators={{ onChange: insertExpensesSchema.shape.amount }}
+          asyncDebounceMs={500}
+          validators={{ onChangeAsync: insertExpensesSchema.shape.amount }}
         >
           {({ name, state, handleBlur, handleChange }) => (
             <div className="relative flex flex-col gap-2">
