@@ -2,14 +2,14 @@ import { json } from "@tanstack/start";
 import { createAPIFileRoute } from "@tanstack/start/api";
 import { eq } from "drizzle-orm";
 
-import { dbPool } from "db";
+import { db } from "db";
 import { expensesTable } from "db/schema";
 
 export const Route = createAPIFileRoute("/api/expense/$id")({
   GET: async ({ params }) => {
     const id = Number.parseInt(params.id);
 
-    const [expense] = await dbPool
+    const [expense] = await db
       .select()
       .from(expensesTable)
       .where(eq(expensesTable.id, id));
@@ -23,7 +23,7 @@ export const Route = createAPIFileRoute("/api/expense/$id")({
   DELETE: async ({ params }) => {
     const id = Number.parseInt(params.id);
 
-    const [deletedExpense] = await dbPool
+    const [deletedExpense] = await db
       .delete(expensesTable)
       .where(eq(expensesTable.id, id))
       .returning();

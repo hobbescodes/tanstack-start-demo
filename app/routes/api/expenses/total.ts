@@ -2,12 +2,12 @@ import { json } from "@tanstack/start";
 import { createAPIFileRoute } from "@tanstack/start/api";
 import { sum } from "drizzle-orm";
 
-import { dbPool } from "db";
+import { db } from "db";
 import { expensesTable } from "db/schema";
 
 export const Route = createAPIFileRoute("/api/expenses/total")({
   GET: async () => {
-    const [amount] = await dbPool
+    const [amount] = await db
       .select({ total: sum(expensesTable.amount) })
       .from(expensesTable);
 

@@ -1,12 +1,12 @@
 import { json } from "@tanstack/start";
 import { createAPIFileRoute } from "@tanstack/start/api";
 
-import { dbPool } from "db";
+import { db } from "db";
 import { expensesTable, insertExpensesSchema } from "db/schema";
 
 export const Route = createAPIFileRoute("/api/expenses")({
   GET: async () => {
-    const expenses = await dbPool.select().from(expensesTable);
+    const expenses = await db.select().from(expensesTable);
 
     return json(expenses);
   },
@@ -19,7 +19,7 @@ export const Route = createAPIFileRoute("/api/expenses")({
       return new Response("Invalid expense data", { status: 400 });
     }
 
-    await dbPool.insert(expensesTable).values(expense);
+    await db.insert(expensesTable).values(expense);
 
     return json(expense);
   },
