@@ -2,16 +2,16 @@ import {
   queryOptions,
   useIsMutating,
   useSuspenseQuery,
-} from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+} from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from "@tanstack/react-table";
-import { createServerFn } from "@tanstack/start";
-import { formatInTimeZone } from "date-fns-tz";
+} from '@tanstack/react-table'
+import { createServerFn } from '@tanstack/start'
+import { formatInTimeZone } from 'date-fns-tz'
 
 import {
   Table,
@@ -21,60 +21,60 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "components/core";
-import { API_BASE_URL } from "lib/config/env";
-import { cn } from "lib/utils";
+} from 'components/core'
+import { API_BASE_URL } from 'lib/config/env'
+import { cn } from 'lib/utils'
 
-import type { OutputExpense } from "db/schema";
+import type { OutputExpense } from 'db/schema'
 
-const getAllExpenses = createServerFn({ method: "GET" }).handler(
+const getAllExpenses = createServerFn({ method: 'GET' }).handler(
   async (): Promise<OutputExpense[]> => {
-    const response = await fetch(`${API_BASE_URL}/api/expenses`);
+    const response = await fetch(`${API_BASE_URL}/api/expenses`)
 
-    return response.json();
-  }
-);
+    return response.json()
+  },
+)
 
 export const allExpensesQueryOptions = queryOptions({
-  queryKey: ["expenses"],
+  queryKey: ['expenses'],
   queryFn: () => getAllExpenses(),
-});
+})
 
-const columnHelper = createColumnHelper<OutputExpense>();
+const columnHelper = createColumnHelper<OutputExpense>()
 
 const columns = [
-  columnHelper.accessor("title", {
-    header: "Title",
+  columnHelper.accessor('title', {
+    header: 'Title',
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("amount", {
-    header: "Amount (USD)",
+  columnHelper.accessor('amount', {
+    header: 'Amount (USD)',
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("createdAt", {
-    header: "Created At",
+  columnHelper.accessor('createdAt', {
+    header: 'Created At',
     cell: (info) => {
-      const value = info.getValue();
+      const value = info.getValue()
 
       return value
-        ? formatInTimeZone(value, "America/Chicago", "MM/dd/yyyy")
-        : "-";
+        ? formatInTimeZone(value, 'America/Chicago', 'MM/dd/yyyy')
+        : '-'
     },
   }),
-];
+]
 
 const Expenses = () => {
-  const { data } = useSuspenseQuery(allExpensesQueryOptions);
+  const { data } = useSuspenseQuery(allExpensesQueryOptions)
 
   const isCreatingExpense = useIsMutating({
-    mutationKey: ["expense", "create"],
-  });
+    mutationKey: ['expense', 'create'],
+  })
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-  });
+  })
 
   return (
     <Table className="max-w-xl mx-auto">
@@ -89,7 +89,7 @@ const Expenses = () => {
               <TableHead key={header.id}>
                 {flexRender(
                   header.column.columnDef.header,
-                  header.getContext()
+                  header.getContext(),
                 )}
               </TableHead>
             ))}
@@ -101,8 +101,8 @@ const Expenses = () => {
           <TableRow
             key={row.id}
             className={cn(
-              "even:bg-muted",
-              isCreatingExpense && "last:opacity-30"
+              'even:bg-muted',
+              isCreatingExpense && 'last:opacity-30',
             )}
           >
             {row.getVisibleCells().map((cell) => (
@@ -114,11 +114,11 @@ const Expenses = () => {
         ))}
       </TableBody>
     </Table>
-  );
-};
+  )
+}
 
-export const Route = createFileRoute("/expenses")({
+export const Route = createFileRoute('/_authed/expenses')({
   loader: async ({ context: { queryClient } }) =>
     queryClient.ensureQueryData(allExpensesQueryOptions),
   component: Expenses,
-});
+})

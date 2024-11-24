@@ -8,7 +8,7 @@ import { Button, Input, Label } from "components/core";
 import { insertExpensesSchema } from "db/schema";
 import { API_BASE_URL } from "lib/config/env";
 import { cn } from "lib/utils";
-import { allExpensesQueryOptions } from "routes/expenses";
+import { allExpensesQueryOptions } from "routes/_authed/expenses";
 
 import type { InputExpense } from "db/schema";
 
@@ -162,6 +162,6 @@ const RouteComponent = () => {
     </form>
   );
 };
-export const Route = createFileRoute("/create-expense")({
+export const Route = createFileRoute("/_authed/create-expense")({
   component: RouteComponent,
 });

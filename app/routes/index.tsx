@@ -1,3 +1,4 @@
+import { SignedIn, SignedOut } from "@clerk/tanstack-start";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/start";
@@ -29,13 +30,18 @@ const Home = () => {
 
   return (
     <div className="w-full flex flex-col items-center">
-      <Card className="w-full max-w-xl">
-        <CardHeader>
-          <CardTitle>Total Expenses</CardTitle>
-          <CardDescription>The total amount of expenses.</CardDescription>
-        </CardHeader>
-        <CardContent>{data.total}</CardContent>
-      </Card>
+      <SignedIn>
+        <Card className="w-full max-w-xl">
+          <CardHeader>
+            <CardTitle>Total Expenses</CardTitle>
+            <CardDescription>The total amount of expenses.</CardDescription>
+          </CardHeader>
+          <CardContent>{data.total}</CardContent>
+        </Card>
+      </SignedIn>
+
+      {/* TODO: customize */}
+      <SignedOut>Welcome to the Expense Tracker App!</SignedOut>
     </div>
   );
 };
