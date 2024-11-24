@@ -16,11 +16,7 @@ import {
   TableRow,
 } from "components/core";
 
-import type { insertExpensesSchema, selectExpensesSchema } from "../db/schema";
-import type { z } from "zod";
-
-type OutputExpense = z.infer<typeof selectExpensesSchema>;
-type InputExpense = z.infer<typeof insertExpensesSchema>;
+import type { InputExpense, OutputExpense } from "../db/schema";
 
 const getAllExpenses = createServerFn({ method: "GET" }).handler(
   async (): Promise<OutputExpense[]> => {

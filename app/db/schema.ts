@@ -42,3 +42,6 @@ export const insertExpensesSchema = createInsertSchema(expensesTable, {
 
 // Schema for selecting a Expenses - can be used to validate API responses
 export const selectExpensesSchema = createSelectSchema(expensesTable);
+
+export type InputExpense = z.infer<typeof insertExpensesSchema>;
+export type OutputExpense = z.infer<typeof selectExpensesSchema>;

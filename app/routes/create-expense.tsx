@@ -9,9 +9,7 @@ import { insertExpensesSchema } from "db/schema";
 import { cn } from "lib/utils";
 import { loadingExpenseQueryOptions } from "routes/expenses";
 
-import type { z } from "zod";
-
-type InputExpense = z.infer<typeof insertExpensesSchema>;
+import type { InputExpense } from "db/schema";
 
 const addExpense = createServerFn()
   .validator((expense: unknown) => insertExpensesSchema.parse(expense))
