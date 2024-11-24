@@ -1,6 +1,7 @@
 import { useForm } from "@tanstack/react-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/start";
 import { zodValidator } from "@tanstack/zod-form-adapter";
 
 import { Button, Input, Label } from "components/core";
@@ -9,25 +10,24 @@ import { cn } from "lib/utils";
 
 import type { InputExpense } from "lib/mock/expenses";
 
-const RouteComponent = () => {
-  const queryClient = useQueryClient();
+const addExpense = createServerFn()
+  .validator((expense: unknown) => createExpenseSchema.parse(expense))
+  .handler(async ({ data }) => {
+    await fetch("http://localhost:3000/api/expenses", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  });
 
+const RouteComponent = () => {
   const navigate = useNavigate();
 
   const { mutateAsync } = useMutation({
-    mutationFn: async (newExpense: InputExpense) => {
-      await fetch("http://localhost:3000/api/expenses", {
-        method: "POST",
-        body: JSON.stringify(newExpense),
-      });
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["all-expenses"] });
-      navigate({ to: "/expenses" });
-    },
+    mutationFn: (newExpense: InputExpense) => addExpense({ data: newExpense }),
+    onSuccess: () => navigate({ to: "/expenses" }),
   });
 
-  const { handleSubmit, Field, Subscribe } = useForm({
+  const { handleSubmit, Field, Subscribe, reset } = useForm({
     defaultValues: {
       title: "",
       amount: 0,
@@ -36,7 +36,7 @@ const RouteComponent = () => {
     validators: {
       onChange: createExpenseSchema,
     },
-    onSubmit: async ({ value }) => mutateAsync(value),
+    onSubmit: async ({ value }) => await mutateAsync(value),
   });
 
   return (
@@ -46,6 +46,7 @@ const RouteComponent = () => {
         e.preventDefault();
         e.stopPropagation();
         await handleSubmit();
+        reset();
       }}
     >
       <div className="flex flex-col gap-4">
