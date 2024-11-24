@@ -2,8 +2,11 @@ import { z } from "zod";
 
 const expenseSchema = z.object({
   id: z.number().int().positive().min(1),
-  title: z.string().min(3).max(100),
-  amount: z.number().int().positive(),
+  title: z
+    .string()
+    .min(3, "The title must be at least 3 characters")
+    .max(100, "The title must be at most 100 characters"),
+  amount: z.number().int("The amount must be a positive integer").positive(),
 });
 
 export const createExpenseSchema = expenseSchema.omit({ id: true });

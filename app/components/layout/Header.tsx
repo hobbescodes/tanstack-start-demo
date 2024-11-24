@@ -19,8 +19,13 @@ const Header = () => {
         TanStack Start Demo
       </Link>
       <div className="flex gap-4">
-        {NAV_LINKS.map(({ to, label, ...rest }) => (
-          <Link key={to} to={to} className="[&.active]:font-bold" {...rest}>
+        {NAV_LINKS.map(({ to, label, activeProps, ...rest }) => (
+          <Link
+            key={to}
+            to={to}
+            activeProps={{ className: "font-bold" }}
+            {...rest}
+          >
             {label}
           </Link>
         ))}

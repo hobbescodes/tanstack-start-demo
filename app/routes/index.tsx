@@ -1,7 +1,6 @@
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { serverOnly } from "@tanstack/start";
-
+import { createServerFn } from "@tanstack/start";
 import {
   Card,
   CardHeader,
@@ -9,10 +8,10 @@ import {
   CardDescription,
   CardContent,
 } from "components/core";
-import { Layout } from "components/layout";
 
-// TODO: figure out appropriate use of serverOnly vs createServerFn (createServerFn always returns a ReadableStream? How to type that appropriately?)
-const getTotalExpenses = serverOnly<Promise<{ total: number }>>(async () => {
+const getTotalExpenses = createServerFn({
+  method: "GET",
+}).handler(async (): Promise<{ total: number }> => {
   // TODO: set up fetch for production
   const response = await fetch("http://localhost:3000/api/expenses/total");
 
@@ -21,22 +20,20 @@ const getTotalExpenses = serverOnly<Promise<{ total: number }>>(async () => {
 
 const totalExpensesQueryOptions = queryOptions({
   queryKey: ["total-expenses"],
-  queryFn: getTotalExpenses,
+  queryFn: () => getTotalExpenses(),
 });
 
 const Home = () => {
   const { data } = useSuspenseQuery(totalExpensesQueryOptions);
 
   return (
-    <Layout>
-      <Card>
-        <CardHeader>
-          <CardTitle>Total Expenses</CardTitle>
-          <CardDescription>The total amount of expenses.</CardDescription>
-        </CardHeader>
-        <CardContent>{data?.total ?? 0}</CardContent>
-      </Card>
-    </Layout>
+    <Card>
+      <CardHeader>
+        <CardTitle>Total Expenses</CardTitle>
+        <CardDescription>The total amount of expenses.</CardDescription>
+      </CardHeader>
+      <CardContent>{data.total}</CardContent>
+    </Card>
   );
 };
 
