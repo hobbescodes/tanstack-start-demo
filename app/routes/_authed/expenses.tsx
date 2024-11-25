@@ -13,7 +13,7 @@ import {
 } from "@tanstack/react-table";
 import { formatInTimeZone } from "date-fns-tz";
 import { TrashIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import {
   Button,
@@ -38,14 +38,11 @@ export const allExpensesQueryOptions = queryOptions({
 const columnHelper = createColumnHelper<OutputExpense>();
 
 const Expenses = () => {
-  const [deletedId, setDeletedId] = useState<number | null>(null);
   const { data } = useSuspenseQuery(allExpensesQueryOptions);
 
-  const { mutate } = useMutation({
+  const { variables: deletedId, mutate } = useMutation({
     mutationFn: async (expenseIdToDelete: number) =>
       await deleteExpense({ data: expenseIdToDelete }),
-    onMutate: (expenseId) => setDeletedId(expenseId),
-    onSettled: () => setDeletedId(null),
   });
 
   const columns = useMemo(
