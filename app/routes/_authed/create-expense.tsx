@@ -26,15 +26,18 @@ const RouteComponent = () => {
     mutationFn: async (newExpense: InputExpense) =>
       await createExpense({ data: newExpense }),
     onMutate: async (expense) => {
+      // NB: In the case that the user has not navigated to the expenses page, ensure that the query cache is populated with the latest data
       const previousExpenses = await queryClient.ensureQueryData(
         allExpensesQueryOptions
       );
 
+      // NB: cheeky way (should do better lol) to get the max id of all current expenses
       const maxId = previousExpenses.reduce(
         (acc, cur) => Math.max(acc, cur.id),
         0
       );
 
+      // NB: Add the new expense to the query cache
       queryClient.setQueryData(allExpensesQueryOptions.queryKey, [
         ...previousExpenses,
         {
@@ -45,6 +48,7 @@ const RouteComponent = () => {
         },
       ]);
 
+      // NB: Navigate to the expenses page right away
       navigate({ to: "/expenses" });
     },
   });
@@ -54,9 +58,11 @@ const RouteComponent = () => {
       title: "",
       amount: "",
     },
+    // NB: debounce form validation
     asyncDebounceMs: 300,
     validatorAdapter: zodValidator(),
     validators: {
+      // NB: form level validation
       onChangeAsync: insertExpensesSchema.omit({ userId: true }),
     },
     onSubmit: async ({ value }) =>
@@ -76,8 +82,10 @@ const RouteComponent = () => {
       <div className="flex flex-col gap-4">
         <Field
           name="title"
+          // NB: debounce field level validation
           asyncDebounceMs={300}
           validators={{
+            // NB: field level validation
             onChangeAsync: insertExpensesSchema.shape.title,
           }}
         >
@@ -95,6 +103,7 @@ const RouteComponent = () => {
               <em
                 className={cn(
                   "absolute top-0 right-0 text-red-400 h-5 text-sm",
+                  // NB: because there is form level validation in place, we need to check if the field itself is dirty
                   state.meta.errors && state.meta.isDirty
                     ? "visible"
                     : "invisible"
