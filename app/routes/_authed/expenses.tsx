@@ -12,9 +12,11 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { formatInTimeZone } from "date-fns-tz";
+import { TrashIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import {
+  Button,
   Table,
   TableBody,
   TableCaption,
@@ -23,7 +25,6 @@ import {
   TableHeader,
   TableRow,
 } from "components/core";
-import { DeleteExpense } from "components/expense";
 import { deleteExpense, getAllExpenses } from "lib/server";
 import { cn } from "lib/utils";
 
@@ -73,11 +74,14 @@ const Expenses = () => {
           const expenseId = info.getValue();
 
           return (
-            <DeleteExpense
-              expenseId={expenseId}
+            <Button
+              variant="ghost"
+              className="text-red-500 hover:text-red-500"
               disabled={expenseId === deletedId}
               onClick={() => mutate(expenseId)}
-            />
+            >
+              <TrashIcon />
+            </Button>
           );
         },
       }),
