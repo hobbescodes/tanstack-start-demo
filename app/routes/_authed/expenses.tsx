@@ -13,7 +13,7 @@ import {
 } from "@tanstack/react-table";
 import { createServerFn } from "@tanstack/start";
 import { formatInTimeZone } from "date-fns-tz";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { TrashIcon } from "lucide-react";
 import { useMemo } from "react";
 import { toast } from "sonner";
@@ -48,7 +48,8 @@ const getAllExpenses = createServerFn({
   return await db
     .select()
     .from(expensesTable)
-    .where(eq(expensesTable.userId, userId));
+    .where(eq(expensesTable.userId, userId))
+    .orderBy(asc(expensesTable.id));
 });
 
 const deleteExpense = createServerFn({

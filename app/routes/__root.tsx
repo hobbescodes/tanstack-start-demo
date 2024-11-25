@@ -9,7 +9,7 @@ import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { Meta, Scripts } from "@tanstack/start";
 import { Toaster } from "sonner";
 
-import { Footer, Header } from "components/layout";
+import { Footer, Header, NotFound } from "components/layout";
 import { fetchClerkAuth } from "lib/server";
 import appCss from "lib/styles/main.css?url";
 
@@ -60,5 +60,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     beforeLoad: async () => await fetchClerkAuth(),
     loader: async ({ context: { userId } }) => ({ userId }),
     component: RootDocument,
+    notFoundComponent: () => <NotFound />,
   }
 );

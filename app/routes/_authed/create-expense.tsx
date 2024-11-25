@@ -122,7 +122,7 @@ const RouteComponent = () => {
               />
               <em
                 className={cn(
-                  "absolute top-0 right-0 text-red-400 h-5 text-sm",
+                  "absolute -top-0.5 right-0 text-red-400 h-5 text-xs",
                   // NB: because there is form level validation in place, we need to check if the field itself is dirty
                   state.meta.errors && state.meta.isDirty
                     ? "visible"
@@ -154,7 +154,7 @@ const RouteComponent = () => {
               />
               <em
                 className={cn(
-                  "absolute top-0 right-0 text-red-400 h-5 text-sm",
+                  "absolute -top-0.5 right-0 text-red-400 h-5 text-xs",
                   state.meta.errors && state.meta.isDirty
                     ? "visible"
                     : "invisible"

@@ -21,12 +21,15 @@ const config: KnipConfig = {
   ignore: [
     // Generated route tree
     "app/routeTree.gen.ts",
+    // Tailwind CSS configuration
+    "postcss.config.mjs",
   ],
   ignoreDependencies: [
     // Peer dependency
     "@vitejs/plugin-react",
     // Tailwind CSS for styling, implemented through vite plugin
     "tailwindcss",
+    "@tailwindcss/postcss",
   ],
 };
 
