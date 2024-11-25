@@ -15,8 +15,6 @@ const config: KnipConfig = {
     "app/router.tsx",
     // The server entry point. See: https://tanstack.com/router/latest/docs/framework/react/start/getting-started#the-server-entry-point
     "app/ssr.tsx",
-    // The api entry point. See: https://tanstack.com/router/latest/docs/framework/react/start/api-routes
-    "app/api.ts",
     // TanStack Start configuration. See: https://tanstack.com/router/latest/docs/framework/react/start/getting-started#update-configuration-files
     "app.config.ts",
     // DB seeding
