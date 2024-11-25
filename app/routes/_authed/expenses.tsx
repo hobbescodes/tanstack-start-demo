@@ -1,6 +1,7 @@
 import {
   queryOptions,
   useIsMutating,
+  useMutation,
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
@@ -11,6 +12,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { formatInTimeZone } from "date-fns-tz";
+import { useMemo, useState } from "react";
 
 import {
   Table,
@@ -21,7 +23,8 @@ import {
   TableHeader,
   TableRow,
 } from "components/core";
-import { getAllExpenses } from "lib/server";
+import { DeleteExpense } from "components/expense";
+import { deleteExpense, getAllExpenses } from "lib/server";
 import { cn } from "lib/utils";
 
 import type { OutputExpense } from "db/schema";
@@ -33,29 +36,54 @@ export const allExpensesQueryOptions = queryOptions({
 
 const columnHelper = createColumnHelper<OutputExpense>();
 
-const columns = [
-  columnHelper.accessor("title", {
-    header: "Title",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("amount", {
-    header: "Amount (USD)",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("createdAt", {
-    header: "Created At",
-    cell: (info) => {
-      const value = info.getValue();
-
-      return value
-        ? formatInTimeZone(value, "America/Chicago", "MM/dd/yyyy")
-        : "-";
-    },
-  }),
-];
-
 const Expenses = () => {
+  const [deletedId, setDeletedId] = useState<number | null>(null);
   const { data } = useSuspenseQuery(allExpensesQueryOptions);
+
+  const { mutate } = useMutation({
+    mutationFn: async (expenseIdToDelete: number) =>
+      await deleteExpense({ data: expenseIdToDelete }),
+    onMutate: (expenseId) => setDeletedId(expenseId),
+    onSettled: () => setDeletedId(null),
+  });
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor("title", {
+        header: "Title",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("amount", {
+        header: "Amount (USD)",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("createdAt", {
+        header: "Created At",
+        cell: (info) => {
+          const value = info.getValue();
+
+          return value
+            ? formatInTimeZone(value, "America/Chicago", "MM/dd/yyyy")
+            : "-";
+        },
+      }),
+      columnHelper.accessor("id", {
+        header: "Remove",
+        cell: (info) => {
+          const expenseId = info.getValue();
+
+          return (
+            <DeleteExpense
+              expenseId={expenseId}
+              disabled={expenseId === deletedId}
+              onClick={() => mutate(expenseId)}
+            />
+          );
+        },
+      }),
+    ],
+    [deletedId, mutate]
+  );
 
   const isCreatingExpense = useIsMutating({
     mutationKey: ["expense", "create"],
@@ -93,7 +121,8 @@ const Expenses = () => {
             key={row.id}
             className={cn(
               "even:bg-muted",
-              isCreatingExpense && "last:opacity-30"
+              isCreatingExpense && "last:opacity-30",
+              row.original.id === deletedId && "opacity-30"
             )}
           >
             {row.getVisibleCells().map((cell) => (

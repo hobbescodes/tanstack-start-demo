@@ -16,6 +16,8 @@ const deleteExpense = createServerFn({
       throw new Error("Unauthorized");
     }
 
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
     const [deletedExpense] = await db
       .delete(expensesTable)
       .where(eq(expensesTable.id, id))
