@@ -1,5 +1,4 @@
 import { ClerkProvider } from "@clerk/tanstack-start";
-import { getAuth } from "@clerk/tanstack-start/server";
 import {
   Outlet,
   ScrollRestoration,
@@ -7,23 +6,15 @@ import {
 } from "@tanstack/react-router";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
-import { createServerFn, Meta, Scripts } from "@tanstack/start";
-import { getWebRequest } from "vinxi/http";
+import { Meta, Scripts } from "@tanstack/start";
+import { Toaster } from "sonner";
 
 import { Footer, Header } from "components/layout";
+import { fetchClerkAuth } from "lib/server";
 import appCss from "lib/styles/main.css?url";
 
 import type { QueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
-
-// @ts-ignore TODO: figure out how to type this
-const fetchClerkAuth = createServerFn({ method: "GET" }).handler(async () => {
-  const user = await getAuth(getWebRequest());
-
-  return {
-    user,
-  };
-});
 
 const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
   return (
@@ -53,6 +44,7 @@ const RootComponent = () => {
           </main>
           <Footer />
         </div>
+        <Toaster richColors />
       </RootDocument>
     </ClerkProvider>
   );
@@ -75,13 +67,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       ],
       links: [{ rel: "stylesheet", href: appCss }],
     }),
-    beforeLoad: async () => {
-      const { user } = await fetchClerkAuth();
-
-      return {
-        user,
-      };
-    },
+    beforeLoad: async () => fetchClerkAuth(),
+    loader: async ({ context: { userId } }) => ({ userId }),
     component: RootComponent,
   }
 );

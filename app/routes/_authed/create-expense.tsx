@@ -1,29 +1,22 @@
+import { useAuth } from "@clerk/tanstack-start";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/start";
 import { zodValidator } from "@tanstack/zod-form-adapter";
 
 import { Button, Input, Label } from "components/core";
 import { insertExpensesSchema } from "db/schema";
-import { API_BASE_URL } from "lib/config/env";
+import { createExpense } from "lib/server";
 import { cn } from "lib/utils";
 import { allExpensesQueryOptions } from "routes/_authed/expenses";
 
 import type { InputExpense } from "db/schema";
 
-const addExpense = createServerFn()
-  .validator((expense: unknown) => insertExpensesSchema.parse(expense))
-  .handler(async ({ data }) => {
-    await fetch(`${API_BASE_URL}/api/expenses`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  });
-
 const now = new Date().toISOString();
 
 const RouteComponent = () => {
+  const { userId } = useAuth();
+
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
@@ -31,7 +24,7 @@ const RouteComponent = () => {
   const { mutateAsync } = useMutation({
     mutationKey: ["expense", "create"],
     mutationFn: async (newExpense: InputExpense) =>
-      await addExpense({ data: newExpense }),
+      await createExpense({ data: newExpense }),
     onMutate: async (expense) => {
       const previousExpenses = await queryClient.ensureQueryData(
         allExpensesQueryOptions
@@ -64,9 +57,10 @@ const RouteComponent = () => {
     asyncDebounceMs: 500,
     validatorAdapter: zodValidator(),
     validators: {
-      onChangeAsync: insertExpensesSchema,
+      onChangeAsync: insertExpensesSchema.omit({ userId: true }),
     },
-    onSubmit: async ({ value }) => await mutateAsync(value),
+    onSubmit: async ({ value }) =>
+      await mutateAsync({ ...value, userId: userId! }),
   });
 
   return (
@@ -153,7 +147,7 @@ const RouteComponent = () => {
         {([canSubmit, isSubmitting, isDirty]) => (
           <Button
             type="submit"
-            disabled={!canSubmit || !isDirty || isSubmitting}
+            disabled={!canSubmit || !isDirty || isSubmitting || !userId}
           >
             {isSubmitting ? "Submitting..." : "Create Expense"}
           </Button>

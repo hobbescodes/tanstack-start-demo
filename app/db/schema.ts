@@ -3,21 +3,29 @@ import {
   text,
   pgTable,
   timestamp,
+  index,
   integer,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const expensesTable = pgTable("expenses", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  title: text().notNull(),
-  amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
-  createdAt: timestamp({
-    precision: 6,
-    mode: "string",
-    withTimezone: true,
-  }).defaultNow(),
-});
+export const expensesTable = pgTable(
+  "expenses",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    userId: text().notNull(),
+    title: text().notNull(),
+    amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
+    createdAt: timestamp({
+      precision: 6,
+      mode: "string",
+      withTimezone: true,
+    }).defaultNow(),
+  },
+  (expenses) => ({
+    userIdIndex: index().on(expenses.userId),
+  })
+);
 
 // Schema for inserting a user - can be used to validate API requests
 export const insertExpensesSchema = createInsertSchema(expensesTable, {
@@ -41,7 +49,9 @@ export const insertExpensesSchema = createInsertSchema(expensesTable, {
 });
 
 // Schema for selecting a Expenses - can be used to validate API responses
-export const selectExpensesSchema = createSelectSchema(expensesTable);
+export const selectExpensesSchema = createSelectSchema(expensesTable).omit({
+  userId: true,
+});
 
 export type InputExpense = z.infer<typeof insertExpensesSchema>;
 export type OutputExpense = z.infer<typeof selectExpensesSchema>;
