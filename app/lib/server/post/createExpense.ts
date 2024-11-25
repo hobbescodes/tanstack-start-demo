@@ -15,6 +15,7 @@ const getAllExpenses = createServerFn({
       throw new Error("Unauthorized");
     }
 
+    // ! NB: simulate expense creation delay
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const [expense] = await db.insert(expensesTable).values(data).returning();

@@ -3,6 +3,7 @@ import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-form-adapter";
+import { toast } from "sonner";
 
 import { Button, Input, Label } from "components/core";
 import { insertExpensesSchema } from "db/schema";
@@ -64,7 +65,12 @@ const RouteComponent = () => {
       onChangeAsync: insertExpensesSchema.omit({ userId: true }),
     },
     onSubmit: async ({ value }) =>
-      await mutateAsync({ ...value, userId: userId! }),
+      toast.promise(mutateAsync({ ...value, userId: userId! }), {
+        loading: "Adding expense...",
+        success: "Expense added successfully!",
+        error: "Error adding expense",
+        duration: 5000,
+      }),
   });
 
   return (

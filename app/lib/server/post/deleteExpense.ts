@@ -16,6 +16,7 @@ const deleteExpense = createServerFn({
       throw new Error("Unauthorized");
     }
 
+    // ! NB: simulate expense deletion delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const [deletedExpense] = await db

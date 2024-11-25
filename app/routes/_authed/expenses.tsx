@@ -29,6 +29,7 @@ import { deleteExpense, getAllExpenses } from "lib/server";
 import { cn } from "lib/utils";
 
 import type { OutputExpense } from "db/schema";
+import { toast } from "sonner";
 
 export const allExpensesQueryOptions = queryOptions({
   queryKey: ["expenses"],
@@ -40,7 +41,11 @@ const columnHelper = createColumnHelper<OutputExpense>();
 const Expenses = () => {
   const { data } = useSuspenseQuery(allExpensesQueryOptions);
 
-  const { variables: deletedId, mutate } = useMutation({
+  const {
+    variables: deletedId,
+    mutateAsync,
+    isPending,
+  } = useMutation({
     mutationFn: async (expenseIdToDelete: number) =>
       await deleteExpense({ data: expenseIdToDelete }),
   });
@@ -74,12 +79,20 @@ const Expenses = () => {
         cell: (info) => {
           const expenseId = info.getValue();
 
+          const deleteExpense = () =>
+            toast.promise(mutateAsync(expenseId), {
+              loading: "Deleting expense...",
+              success: "Expense deleted successfully!",
+              error: "Error deleting expense",
+              duration: 5000,
+            });
+
           return (
             <Button
               variant="ghost"
               className="text-red-500 hover:text-red-500"
-              disabled={expenseId === deletedId}
-              onClick={() => mutate(expenseId)}
+              disabled={expenseId === deletedId && isPending}
+              onClick={deleteExpense}
             >
               <TrashIcon />
             </Button>
@@ -87,7 +100,7 @@ const Expenses = () => {
         },
       }),
     ],
-    [deletedId, mutate]
+    [deletedId, isPending, mutateAsync]
   );
 
   const table = useReactTable({
@@ -123,7 +136,7 @@ const Expenses = () => {
             className={cn(
               "even:bg-muted",
               isCreatingExpense && "last:opacity-30",
-              row.original.id === deletedId && "opacity-30"
+              row.original.id === deletedId && isPending && "opacity-30"
             )}
           >
             {row.getVisibleCells().map((cell) => (
