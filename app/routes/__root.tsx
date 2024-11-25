@@ -67,7 +67,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       ],
       links: [{ rel: "stylesheet", href: appCss }],
     }),
-    beforeLoad: async () => fetchClerkAuth(),
+    beforeLoad: async () => await fetchClerkAuth(),
     loader: async ({ context: { userId } }) => ({ userId }),
     component: RootComponent,
   }
