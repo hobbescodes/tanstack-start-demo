@@ -40,7 +40,7 @@ const RouteComponent = () => {
         {
           id: maxId + 1,
           title: expense.title,
-          amount: expense.amount,
+          amount: Number(expense.amount).toFixed(2),
           createdAt: now,
         },
       ]);
