@@ -103,7 +103,10 @@ Install tanstack-start-demo using one of the following methods:
 ❯ bun install
 ```
 
-
+4. Set up local environment variables:
+```sh
+❯ cp .env.local.template .env.local
+``` 
 
 
 ### 🤖 Usage
