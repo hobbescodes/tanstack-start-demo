@@ -1,1 +1,1 @@
-export const { API_BASE_URL, DATABASE_URL } = process.env;
+export const { DATABASE_URL } = process.env;
