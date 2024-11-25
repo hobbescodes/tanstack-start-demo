@@ -14,6 +14,7 @@ import {
 import { formatInTimeZone } from "date-fns-tz";
 import { TrashIcon } from "lucide-react";
 import { useMemo } from "react";
+import { toast } from "sonner";
 
 import {
   Button,
@@ -29,7 +30,6 @@ import { deleteExpense, getAllExpenses } from "lib/server";
 import { cn } from "lib/utils";
 
 import type { OutputExpense } from "db/schema";
-import { toast } from "sonner";
 
 export const allExpensesQueryOptions = queryOptions({
   queryKey: ["expenses"],

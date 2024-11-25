@@ -1,11 +1,10 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
 
+import * as schema from "db/schema";
 import { DATABASE_URL } from "lib/config/env";
 
 const { Pool } = pg;
-
-import * as schema from "./schema";
 
 const pool = new Pool({ connectionString: DATABASE_URL! });
 
