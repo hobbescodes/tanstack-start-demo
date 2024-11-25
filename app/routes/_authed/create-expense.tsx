@@ -2,16 +2,37 @@ import { useAuth } from "@clerk/tanstack-start";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/start";
 import { zodValidator } from "@tanstack/zod-form-adapter";
 import { toast } from "sonner";
 
 import { Button, Input, Label } from "components/core";
-import { insertExpensesSchema } from "db/schema";
-import { createExpense } from "lib/server";
+import { db } from "db";
+import { expensesTable, insertExpensesSchema } from "db/schema";
+import { fetchClerkAuth } from "lib/server";
 import { cn } from "lib/utils";
 import { allExpensesQueryOptions } from "routes/_authed/expenses";
 
 import type { InputExpense } from "db/schema";
+
+const createExpense = createServerFn({
+  method: "POST",
+})
+  .validator((expense: unknown) => insertExpensesSchema.parse(expense))
+  .handler(async ({ data }) => {
+    const { userId } = await fetchClerkAuth();
+
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    // ! NB: simulate expense creation delay
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    const [expense] = await db.insert(expensesTable).values(data).returning();
+
+    return expense;
+  });
 
 const RouteComponent = () => {
   const { userId } = useAuth();

@@ -1,6 +1,8 @@
 import { SignedIn, SignedOut, useAuth } from "@clerk/tanstack-start";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/start";
+import { eq, sum } from "drizzle-orm";
 
 import {
   Card,
@@ -10,7 +12,26 @@ import {
   CardContent,
   Skeleton,
 } from "components/core";
-import { getTotalExpenses } from "lib/server";
+import { db } from "db";
+import { expensesTable } from "db/schema";
+import { fetchClerkAuth } from "lib/server";
+
+const getTotalExpenses = createServerFn({
+  method: "GET",
+}).handler(async (): Promise<{ total: number }> => {
+  const { userId } = await fetchClerkAuth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const [amount] = await db
+    .select({ total: sum(expensesTable.amount) })
+    .from(expensesTable)
+    .where(eq(expensesTable.userId, userId));
+
+  return { total: amount.total ? +amount.total : 0 };
+});
 
 const Home = () => {
   const { userId } = useAuth();

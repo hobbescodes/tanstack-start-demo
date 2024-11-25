@@ -11,7 +11,9 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { createServerFn } from "@tanstack/start";
 import { formatInTimeZone } from "date-fns-tz";
+import { eq } from "drizzle-orm";
 import { TrashIcon } from "lucide-react";
 import { useMemo } from "react";
 import { toast } from "sonner";
@@ -26,10 +28,53 @@ import {
   TableHeader,
   TableRow,
 } from "components/core";
-import { deleteExpense, getAllExpenses } from "lib/server";
+import { db } from "db";
+import { expensesTable, selectExpensesSchema } from "db/schema";
+import { fetchClerkAuth } from "lib/server";
 import { cn } from "lib/utils";
 
 import type { OutputExpense } from "db/schema";
+
+const getAllExpenses = createServerFn({
+  method: "GET",
+}).handler(async (): Promise<OutputExpense[]> => {
+  const { userId } = await fetchClerkAuth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  return await db
+    .select()
+    .from(expensesTable)
+    .where(eq(expensesTable.userId, userId));
+});
+
+const deleteExpense = createServerFn({
+  method: "POST",
+})
+  .validator((id: unknown) => selectExpensesSchema.shape.id.parse(id))
+  .handler(async ({ data: id }) => {
+    const { userId } = await fetchClerkAuth();
+
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    // ! NB: simulate expense deletion delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    const [deletedExpense] = await db
+      .delete(expensesTable)
+      .where(eq(expensesTable.id, id))
+      .returning();
+
+    if (!deletedExpense) {
+      throw new Error("Error deleting expense");
+    }
+
+    return deletedExpense;
+  });
 
 export const allExpensesQueryOptions = queryOptions({
   queryKey: ["expenses"],
