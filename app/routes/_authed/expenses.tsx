@@ -37,6 +37,7 @@ import type { OutputExpense } from "db/schema";
 
 const getAllExpenses = createServerFn({
   method: "GET",
+  // NB: explicit return type to indicate that userId is not required
 }).handler(async (): Promise<OutputExpense[]> => {
   const { userId } = await fetchClerkAuth();
 

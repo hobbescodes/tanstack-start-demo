@@ -18,7 +18,7 @@ import { fetchClerkAuth } from "lib/server";
 
 const getTotalExpenses = createServerFn({
   method: "GET",
-}).handler(async (): Promise<{ total: number }> => {
+}).handler(async () => {
   const { userId } = await fetchClerkAuth();
 
   if (!userId) {
