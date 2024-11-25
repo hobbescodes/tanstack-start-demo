@@ -8,6 +8,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
+  Skeleton,
 } from "components/core";
 import { getTotalExpenses } from "lib/server";
 
@@ -15,7 +16,7 @@ const Home = () => {
   const { userId } = useAuth();
 
   // NB: This route is not protected by auth, so instead of loading in the data from the router, we'll fetch it here if the user is signed in
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["expenses", "total"],
     queryFn: () => getTotalExpenses(),
     enabled: !!userId,
@@ -29,7 +30,11 @@ const Home = () => {
             <CardTitle>Total Expenses</CardTitle>
             <CardDescription>The total amount of expenses.</CardDescription>
           </CardHeader>
-          <CardContent>{data?.total ?? 0}</CardContent>
+          <CardContent>
+            <Skeleton isLoading={isLoading} skeletonClassName="max-w-16">
+              {data?.total ?? 0}
+            </Skeleton>
+          </CardContent>
         </Card>
       </SignedIn>
 
