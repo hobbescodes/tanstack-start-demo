@@ -12,8 +12,6 @@ import { allExpensesQueryOptions } from "routes/_authed/expenses";
 
 import type { InputExpense } from "db/schema";
 
-const now = new Date().toISOString();
-
 const RouteComponent = () => {
   const { userId } = useAuth();
 
@@ -44,7 +42,7 @@ const RouteComponent = () => {
           id: maxId + 1,
           title: expense.title,
           amount: Number(expense.amount).toFixed(2),
-          createdAt: now,
+          createdAt: new Date().toISOString(),
         },
       ]);
 
