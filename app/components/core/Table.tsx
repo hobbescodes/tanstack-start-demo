@@ -88,6 +88,7 @@ export {
   Table,
   TableHeader,
   TableBody,
+  /** @knipignore */
   TableFooter,
   TableHead,
   TableRow,

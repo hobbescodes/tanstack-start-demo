@@ -10,7 +10,7 @@ const labelVariants = cva({
   base: "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
 });
 
-export interface LabelProps
+interface LabelProps
   extends ComponentProps<typeof LabelPrimitive.Root>,
     VariantProps<typeof labelVariants> {}
 

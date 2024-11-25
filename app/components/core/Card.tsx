@@ -47,6 +47,7 @@ const CardFooter = ({ className, ...rest }: HTMLAttributes<HTMLDivElement>) => (
 export {
   Card,
   CardHeader,
+  /** @knipignore */
   CardFooter,
   CardTitle,
   CardDescription,

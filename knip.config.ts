@@ -21,10 +21,6 @@ const config: KnipConfig = {
   ignore: [
     // Generated route tree
     "app/routeTree.gen.ts",
-    // TODO: set up knip for monorepo
-    "server/**",
-    // shadcn components
-    "app/components/core/**/*.tsx",
   ],
   ignoreDependencies: [
     // Peer dependency
