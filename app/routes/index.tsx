@@ -14,6 +14,7 @@ import { getTotalExpenses } from "lib/server";
 const Home = () => {
   const { userId } = useAuth();
 
+  // NB: This route is not protected by auth, so instead of loading in the data from the router, we'll fetch it here if the user is signed in
   const { data } = useQuery({
     queryKey: ["expenses", "total"],
     queryFn: () => getTotalExpenses(),

@@ -45,6 +45,10 @@ const Expenses = () => {
       await deleteExpense({ data: expenseIdToDelete }),
   });
 
+  const isCreatingExpense = useIsMutating({
+    mutationKey: ["expense", "create"],
+  });
+
   const columns = useMemo(
     () => [
       columnHelper.accessor("title", {
@@ -85,10 +89,6 @@ const Expenses = () => {
     ],
     [deletedId, mutate]
   );
-
-  const isCreatingExpense = useIsMutating({
-    mutationKey: ["expense", "create"],
-  });
 
   const table = useReactTable({
     data,
