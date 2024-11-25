@@ -51,17 +51,12 @@ const RouteComponent = () => {
         allExpensesQueryOptions
       );
 
-      // NB: cheeky way (should do better lol) to get the max id of all current expenses
-      const maxId = previousExpenses.reduce(
-        (acc, cur) => Math.max(acc, cur.id),
-        0
-      );
-
       // NB: Add the new expense to the query cache
       queryClient.setQueryData(allExpensesQueryOptions.queryKey, [
         ...previousExpenses,
         {
-          id: maxId + 1,
+          // NB: as this is just an optimistic update, we use the max safe integer as the id to ensure that it won't conflict with any existing expenses
+          id: Number.MAX_SAFE_INTEGER,
           title: expense.title,
           amount: Number(expense.amount).toFixed(2),
           createdAt: new Date().toISOString(),

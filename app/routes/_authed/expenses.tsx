@@ -137,6 +137,7 @@ const Expenses = () => {
             <Button
               variant="ghost"
               className="text-red-500 hover:text-red-500"
+              // TODO: determine best way to disable for the optimistically added expense upon creation
               disabled={expenseId === deletedId && isPending}
               onClick={deleteExpense}
             >
