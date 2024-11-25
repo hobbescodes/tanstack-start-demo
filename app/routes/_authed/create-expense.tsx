@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Button, Input, Label } from "components/core";
 import { db } from "db";
 import { expensesTable, insertExpensesSchema } from "db/schema";
-import { fetchClerkAuth } from "lib/server";
+import { validateUser } from "lib/server";
 import { cn } from "lib/utils";
 import { allExpensesQueryOptions } from "routes/_authed/expenses";
 
@@ -18,14 +18,9 @@ import type { InputExpense } from "db/schema";
 const createExpense = createServerFn({
   method: "POST",
 })
+  .middleware([validateUser])
   .validator((expense: unknown) => insertExpensesSchema.parse(expense))
   .handler(async ({ data }) => {
-    const { userId } = await fetchClerkAuth();
-
-    if (!userId) {
-      throw new Error("Unauthorized");
-    }
-
     // ! NB: simulate expense creation delay
     await new Promise((resolve) => setTimeout(resolve, 3000));
 

@@ -14,24 +14,20 @@ import {
 } from "components/core";
 import { db } from "db";
 import { expensesTable } from "db/schema";
-import { fetchClerkAuth } from "lib/server";
+import { validateUser } from "lib/server";
 
 const getTotalExpenses = createServerFn({
   method: "GET",
-}).handler(async () => {
-  const { userId } = await fetchClerkAuth();
+})
+  .middleware([validateUser])
+  .handler(async ({ context: { userId } }) => {
+    const [amount] = await db
+      .select({ total: sum(expensesTable.amount) })
+      .from(expensesTable)
+      .where(eq(expensesTable.userId, userId));
 
-  if (!userId) {
-    throw new Error("Unauthorized");
-  }
-
-  const [amount] = await db
-    .select({ total: sum(expensesTable.amount) })
-    .from(expensesTable)
-    .where(eq(expensesTable.userId, userId));
-
-  return { total: amount.total ? +amount.total : 0 };
-});
+    return { total: amount.total ? +amount.total : 0 };
+  });
 
 const Home = () => {
   const { userId } = useAuth();

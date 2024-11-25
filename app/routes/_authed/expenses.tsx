@@ -30,7 +30,7 @@ import {
 } from "components/core";
 import { db } from "db";
 import { expensesTable, selectExpensesSchema } from "db/schema";
-import { fetchClerkAuth } from "lib/server";
+import { validateUser } from "lib/server";
 import { cn } from "lib/utils";
 
 import type { OutputExpense } from "db/schema";
@@ -38,31 +38,22 @@ import type { OutputExpense } from "db/schema";
 const getAllExpenses = createServerFn({
   method: "GET",
   // NB: explicit return type to indicate that userId is not required
-}).handler(async (): Promise<OutputExpense[]> => {
-  const { userId } = await fetchClerkAuth();
-
-  if (!userId) {
-    throw new Error("Unauthorized");
-  }
-
-  return await db
-    .select()
-    .from(expensesTable)
-    .where(eq(expensesTable.userId, userId))
-    .orderBy(asc(expensesTable.id));
-});
+})
+  .middleware([validateUser])
+  .handler(async ({ context: { userId } }): Promise<OutputExpense[]> => {
+    return await db
+      .select()
+      .from(expensesTable)
+      .where(eq(expensesTable.userId, userId))
+      .orderBy(asc(expensesTable.id));
+  });
 
 const deleteExpense = createServerFn({
   method: "POST",
 })
+  .middleware([validateUser])
   .validator((id: unknown) => selectExpensesSchema.shape.id.parse(id))
-  .handler(async ({ data: id }) => {
-    const { userId } = await fetchClerkAuth();
-
-    if (!userId) {
-      throw new Error("Unauthorized");
-    }
-
+  .handler(async ({ data: id, context: { userId } }) => {
     // ! NB: simulate expense deletion delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
