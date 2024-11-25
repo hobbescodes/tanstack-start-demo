@@ -7,8 +7,6 @@ const config: KnipConfig = {
   entry: [
     // Main application routes
     "app/routes/**/*.tsx",
-    // API routes
-    "app/routes/api/**/*.ts",
     // The client entry point. See: https://tanstack.com/router/latest/docs/framework/react/start/getting-started#the-client-entry-point
     "app/client.tsx",
     // Dictates behavior of TanStack Router. See: https://tanstack.com/router/latest/docs/framework/react/start/getting-started#the-router-configuration
