@@ -34,7 +34,6 @@ const config: KnipConfig = {
     // Tailwind CSS for styling, implemented through vite plugin
     "tailwindcss",
     // TODO: remove the too below when shadcn components need them
-    "lucide-react",
     "tailwindcss-animate",
   ],
 };
