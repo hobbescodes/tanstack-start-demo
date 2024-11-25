@@ -15,8 +15,8 @@ const config: KnipConfig = {
     "app/ssr.tsx",
     // TanStack Start configuration. See: https://tanstack.com/router/latest/docs/framework/react/start/getting-started#update-configuration-files
     "app.config.ts",
-    // DB seeding
-    "app/db/seed.ts",
+    // DB related files
+    "app/db/**/*.ts",
   ],
   ignore: [
     // Generated route tree
