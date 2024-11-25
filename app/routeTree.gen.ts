@@ -11,24 +11,13 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as ExpensesImport } from './routes/expenses'
-import { Route as CreateExpenseImport } from './routes/create-expense'
 import { Route as AboutImport } from './routes/about'
+import { Route as AuthedImport } from './routes/_authed'
 import { Route as IndexImport } from './routes/index'
+import { Route as AuthedExpensesImport } from './routes/_authed/expenses'
+import { Route as AuthedCreateExpenseImport } from './routes/_authed/create-expense'
 
 // Create/Update Routes
-
-const ExpensesRoute = ExpensesImport.update({
-  id: '/expenses',
-  path: '/expenses',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const CreateExpenseRoute = CreateExpenseImport.update({
-  id: '/create-expense',
-  path: '/create-expense',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const AboutRoute = AboutImport.update({
   id: '/about',
@@ -36,10 +25,27 @@ const AboutRoute = AboutImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthedRoute = AuthedImport.update({
+  id: '/_authed',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const AuthedExpensesRoute = AuthedExpensesImport.update({
+  id: '/expenses',
+  path: '/expenses',
+  getParentRoute: () => AuthedRoute,
+} as any)
+
+const AuthedCreateExpenseRoute = AuthedCreateExpenseImport.update({
+  id: '/create-expense',
+  path: '/create-expense',
+  getParentRoute: () => AuthedRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -53,6 +59,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/_authed': {
+      id: '/_authed'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthedImport
+      parentRoute: typeof rootRoute
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -60,68 +73,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
-    '/create-expense': {
-      id: '/create-expense'
+    '/_authed/create-expense': {
+      id: '/_authed/create-expense'
       path: '/create-expense'
       fullPath: '/create-expense'
-      preLoaderRoute: typeof CreateExpenseImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthedCreateExpenseImport
+      parentRoute: typeof AuthedImport
     }
-    '/expenses': {
-      id: '/expenses'
+    '/_authed/expenses': {
+      id: '/_authed/expenses'
       path: '/expenses'
       fullPath: '/expenses'
-      preLoaderRoute: typeof ExpensesImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthedExpensesImport
+      parentRoute: typeof AuthedImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface AuthedRouteChildren {
+  AuthedCreateExpenseRoute: typeof AuthedCreateExpenseRoute
+  AuthedExpensesRoute: typeof AuthedExpensesRoute
+}
+
+const AuthedRouteChildren: AuthedRouteChildren = {
+  AuthedCreateExpenseRoute: AuthedCreateExpenseRoute,
+  AuthedExpensesRoute: AuthedExpensesRoute,
+}
+
+const AuthedRouteWithChildren =
+  AuthedRoute._addFileChildren(AuthedRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '': typeof AuthedRouteWithChildren
   '/about': typeof AboutRoute
-  '/create-expense': typeof CreateExpenseRoute
-  '/expenses': typeof ExpensesRoute
+  '/create-expense': typeof AuthedCreateExpenseRoute
+  '/expenses': typeof AuthedExpensesRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '': typeof AuthedRouteWithChildren
   '/about': typeof AboutRoute
-  '/create-expense': typeof CreateExpenseRoute
-  '/expenses': typeof ExpensesRoute
+  '/create-expense': typeof AuthedCreateExpenseRoute
+  '/expenses': typeof AuthedExpensesRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/_authed': typeof AuthedRouteWithChildren
   '/about': typeof AboutRoute
-  '/create-expense': typeof CreateExpenseRoute
-  '/expenses': typeof ExpensesRoute
+  '/_authed/create-expense': typeof AuthedCreateExpenseRoute
+  '/_authed/expenses': typeof AuthedExpensesRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/create-expense' | '/expenses'
+  fullPaths: '/' | '' | '/about' | '/create-expense' | '/expenses'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/create-expense' | '/expenses'
-  id: '__root__' | '/' | '/about' | '/create-expense' | '/expenses'
+  to: '/' | '' | '/about' | '/create-expense' | '/expenses'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authed'
+    | '/about'
+    | '/_authed/create-expense'
+    | '/_authed/expenses'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthedRoute: typeof AuthedRouteWithChildren
   AboutRoute: typeof AboutRoute
-  CreateExpenseRoute: typeof CreateExpenseRoute
-  ExpensesRoute: typeof ExpensesRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthedRoute: AuthedRouteWithChildren,
   AboutRoute: AboutRoute,
-  CreateExpenseRoute: CreateExpenseRoute,
-  ExpensesRoute: ExpensesRoute,
 }
 
 export const routeTree = rootRoute
@@ -135,22 +168,30 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about",
-        "/create-expense",
-        "/expenses"
+        "/_authed",
+        "/about"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
+    "/_authed": {
+      "filePath": "_authed.tsx",
+      "children": [
+        "/_authed/create-expense",
+        "/_authed/expenses"
+      ]
+    },
     "/about": {
       "filePath": "about.tsx"
     },
-    "/create-expense": {
-      "filePath": "create-expense.tsx"
+    "/_authed/create-expense": {
+      "filePath": "_authed/create-expense.tsx",
+      "parent": "/_authed"
     },
-    "/expenses": {
-      "filePath": "expenses.tsx"
+    "/_authed/expenses": {
+      "filePath": "_authed/expenses.tsx",
+      "parent": "/_authed"
     }
   }
 }

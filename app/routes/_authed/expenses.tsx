@@ -10,7 +10,6 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { createServerFn } from "@tanstack/start";
 import { formatInTimeZone } from "date-fns-tz";
 
 import {
@@ -22,18 +21,10 @@ import {
   TableHeader,
   TableRow,
 } from "components/core";
-import { API_BASE_URL } from "lib/config/env";
+import { getAllExpenses } from "lib/server";
 import { cn } from "lib/utils";
 
 import type { OutputExpense } from "db/schema";
-
-const getAllExpenses = createServerFn({ method: "GET" }).handler(
-  async (): Promise<OutputExpense[]> => {
-    const response = await fetch(`${API_BASE_URL}/api/expenses`);
-
-    return response.json();
-  }
-);
 
 export const allExpensesQueryOptions = queryOptions({
   queryKey: ["expenses"],
@@ -117,7 +108,7 @@ const Expenses = () => {
   );
 };
 
-export const Route = createFileRoute("/expenses")({
+export const Route = createFileRoute("/_authed/expenses")({
   loader: async ({ context: { queryClient } }) =>
     queryClient.ensureQueryData(allExpensesQueryOptions),
   component: Expenses,

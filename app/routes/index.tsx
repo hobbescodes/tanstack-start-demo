@@ -1,6 +1,6 @@
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { SignedIn, SignedOut, useAuth } from "@clerk/tanstack-start";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/start";
 
 import {
   Card,
@@ -9,39 +9,35 @@ import {
   CardDescription,
   CardContent,
 } from "components/core";
-import { API_BASE_URL } from "lib/config/env";
-
-const getTotalExpenses = createServerFn({
-  method: "GET",
-}).handler(async (): Promise<{ total: number }> => {
-  const response = await fetch(`${API_BASE_URL}/api/expenses/total`);
-
-  return response.json();
-});
-
-const totalExpensesQueryOptions = queryOptions({
-  queryKey: ["expenses", "total"],
-  queryFn: () => getTotalExpenses(),
-});
+import { getTotalExpenses } from "lib/server";
 
 const Home = () => {
-  const { data } = useSuspenseQuery(totalExpensesQueryOptions);
+  const { userId } = useAuth();
+
+  const { data } = useQuery({
+    queryKey: ["expenses", "total"],
+    queryFn: () => getTotalExpenses(),
+    enabled: !!userId,
+  });
 
   return (
     <div className="w-full flex flex-col items-center">
-      <Card className="w-full max-w-xl">
-        <CardHeader>
-          <CardTitle>Total Expenses</CardTitle>
-          <CardDescription>The total amount of expenses.</CardDescription>
-        </CardHeader>
-        <CardContent>{data.total}</CardContent>
-      </Card>
+      <SignedIn>
+        <Card className="w-full max-w-xl">
+          <CardHeader>
+            <CardTitle>Total Expenses</CardTitle>
+            <CardDescription>The total amount of expenses.</CardDescription>
+          </CardHeader>
+          <CardContent>{data?.total ?? 0}</CardContent>
+        </Card>
+      </SignedIn>
+
+      {/* TODO: customize */}
+      <SignedOut>Welcome to the Expense Tracker App!</SignedOut>
     </div>
   );
 };
 
 export const Route = createFileRoute("/")({
-  loader: async ({ context: { queryClient } }) =>
-    queryClient.ensureQueryData(totalExpensesQueryOptions),
   component: Home,
 });

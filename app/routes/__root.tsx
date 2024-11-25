@@ -1,3 +1,4 @@
+import { ClerkProvider } from "@clerk/tanstack-start";
 import {
   Outlet,
   ScrollRestoration,
@@ -6,12 +7,14 @@ import {
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { Meta, Scripts } from "@tanstack/start";
+import { Toaster } from "sonner";
+
+import { Footer, Header } from "components/layout";
+import { fetchClerkAuth } from "lib/server";
+import appCss from "lib/styles/main.css?url";
 
 import type { QueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
-
-import appCss from "lib/styles/main.css?url";
-import { Footer, Header } from "components/layout";
 
 const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
   return (
@@ -32,15 +35,18 @@ const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
 
 const RootComponent = () => {
   return (
-    <RootDocument>
-      <div className="grid min-h-dvh w-full grid-rows-layout">
-        <Header />
-        <main className="mx-auto flex w-full max-w-7xl p-4 justify-center">
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
-    </RootDocument>
+    <ClerkProvider>
+      <RootDocument>
+        <div className="grid min-h-dvh w-full grid-rows-layout">
+          <Header />
+          <main className="mx-auto flex w-full max-w-7xl p-4 justify-center">
+            <Outlet />
+          </main>
+          <Footer />
+        </div>
+        <Toaster richColors />
+      </RootDocument>
+    </ClerkProvider>
   );
 };
 
@@ -61,6 +67,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       ],
       links: [{ rel: "stylesheet", href: appCss }],
     }),
+    beforeLoad: async () => fetchClerkAuth(),
+    loader: async ({ context: { userId } }) => ({ userId }),
     component: RootComponent,
   }
 );
