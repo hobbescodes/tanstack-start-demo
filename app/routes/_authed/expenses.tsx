@@ -99,11 +99,11 @@ const Expenses = () => {
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("amount", {
-        header: "Amount (USD)",
-        cell: (info) => info.getValue(),
+        header: "Amount",
+        cell: (info) => `$${info.getValue()}`,
       }),
       columnHelper.accessor("createdAt", {
-        header: "Created At",
+        header: "Created",
         cell: (info) => {
           const value = info.getValue();
 
@@ -128,6 +128,7 @@ const Expenses = () => {
           return (
             <Button
               variant="ghost"
+              size="icon"
               className="text-red-500 hover:text-red-500"
               // TODO: determine best way to disable for the optimistically added expense upon creation
               disabled={expenseId === deletedId && isPending}
@@ -149,7 +150,7 @@ const Expenses = () => {
   });
 
   return (
-    <Table className="max-w-xl mx-auto">
+    <Table>
       <TableCaption>A list of all your expenses</TableCaption>
       <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
@@ -158,7 +159,7 @@ const Expenses = () => {
             className="bg-primary text-primary-foreground hover:bg-primary"
           >
             {headerGroup.headers.map((header) => (
-              <TableHead key={header.id}>
+              <TableHead key={header.id} className="last:text-center">
                 {flexRender(
                   header.column.columnDef.header,
                   header.getContext()
@@ -179,7 +180,7 @@ const Expenses = () => {
             )}
           >
             {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id}>
+              <TableCell key={cell.id} className="last:text-center">
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </TableCell>
             ))}

@@ -49,7 +49,7 @@ const Home = () => {
           </CardHeader>
           <CardContent>
             <Skeleton isLoading={isLoading} skeletonClassName="max-w-16">
-              {(data?.total ?? 0).toFixed(2)}
+              ${(data?.total ?? 0).toFixed(2)}
             </Skeleton>
           </CardContent>
         </Card>
