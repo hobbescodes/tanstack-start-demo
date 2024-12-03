@@ -58,7 +58,7 @@
     "sonner": "^1.7.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss": "^4.0.0-beta.3",
-    "vinxi": "^0.4.3",
+    "vinxi": "^0.5.0",
     "zod": "^3.23.8"
   }
 }
